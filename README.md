@@ -8,6 +8,29 @@
 
 `colonel-bukkit` 模块添加了一些可用于 `Bukkit` 插件的参数类型。
 
+## Development
+
+```kotlin
+repositories {
+  maven("https://r.irepo.space/maven/")
+}
+
+dependencies {
+  implementation("pers.neige.colonel:colonel-common:[latest release version]")
+//  implementation("pers.neige.colonel:colonel-common:[latest release version]") {
+//    exclude(group = "org.neosearch.stringsearcher")
+//  }
+  implementation("pers.neige.colonel:colonel-kotlin:[latest release version]")
+  implementation("pers.neige.colonel:colonel-bukkit:[latest release version]")
+}
+```
+
+需要注意的是，`colonel-common` 模块 `implementation` 了 `org.neosearch.stringsearcher:multiple-string-searcher:0.1.1`。
+
+因此，如果你需要重定向 `colonel`，你需要同时重定向 `pers.neige.colonel` 包和 `org.neosearch.stringsearcher` 包。
+
+假设你项目的前置库内已包含 `multiple-string-searcher`，那么你可以通过 `exclude` 排除这项依赖。
+
 # 基本逻辑
 
 ## 实现示例
