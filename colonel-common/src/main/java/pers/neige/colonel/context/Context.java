@@ -212,18 +212,16 @@ public class Context<S, R> {
     public @NonNull List<String> tab() {
         val lastNode = lastNode();
         val remaining = input.peekRemaining();
-        Collection<String> rawSuggestions;
         if (lastNode.getArgumentNode() != null) {
             val taber = lastNode.getArgumentNode().getTaber();
             if (taber != null) {
                 return taber.apply(this, remaining);
             }
-            rawSuggestions = lastNode.getArgumentNode().getArgument().tab(this, remaining);
-        } else {
-            rawSuggestions = new ArrayList<>();
-            for (LiteralNode<S, R> node : lastNode.getLiteralNodesSet()) {
-                rawSuggestions.addAll(node.getTabNames());
-            }
+            return lastNode.getArgumentNode().getArgument().tab(this, remaining);
+        }
+        Collection<String> rawSuggestions = new ArrayList<>();
+        for (LiteralNode<S, R> node : lastNode.getLiteralNodesSet()) {
+            rawSuggestions.addAll(node.getTabNames());
         }
         val lowerCaseRemaining = remaining.toLowerCase();
         return rawSuggestions.stream().filter(text -> text.toLowerCase().startsWith(lowerCaseRemaining)).collect(Collectors.toList());
