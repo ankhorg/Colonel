@@ -33,7 +33,7 @@ public class PlayerArgument<S, R> extends Argument<S, Player, R> {
     public ParseResult<Player> parse(@NonNull StringReader input, @Nullable S source) {
         val start = input.getOffset();
         val name = input.readString();
-        var player = Bukkit.getPlayer(name);
+        var player = Bukkit.getPlayerExact(name);
         if (player == null && "me".equals(name) && source instanceof Player) {
             player = (Player) source;
         }
