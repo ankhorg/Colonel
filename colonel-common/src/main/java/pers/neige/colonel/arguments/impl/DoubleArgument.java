@@ -29,8 +29,7 @@ public class DoubleArgument<S, R> extends Argument<S, Double, R> {
     private final double maximum = Double.MAX_VALUE;
 
     @Override
-    @NonNull
-    public ParseResult<Double> parse(@NonNull StringReader input, @Nullable S source) {
+    public @NonNull ParseResult<Double> parse(@NonNull StringReader input, @Nullable S source) {
         val result = input.readDouble();
         if (result == null) {
             return new ParseResult<>(null, false);

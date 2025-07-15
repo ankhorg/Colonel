@@ -24,8 +24,7 @@ public class BooleanArgument<S, R> extends Argument<S, Boolean, R> {
     private final static List<String> SUGGESTIONS = Arrays.asList("true", "false");
 
     @Override
-    @NonNull
-    public ParseResult<Boolean> parse(@NonNull StringReader input, @Nullable S source) {
+    public @NonNull ParseResult<Boolean> parse(@NonNull StringReader input, @Nullable S source) {
         val result = input.readBoolean();
         if (result == null) {
             return new ParseResult<>(null, false);

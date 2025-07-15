@@ -29,8 +29,7 @@ public class PlayerArgument<S, R> extends Argument<S, Player, R> {
     private final boolean nonnull = true;
 
     @Override
-    @NonNull
-    public ParseResult<Player> parse(@NonNull StringReader input, @Nullable S source) {
+    public @NonNull ParseResult<Player> parse(@NonNull StringReader input, @Nullable S source) {
         val start = input.getOffset();
         val name = input.readString();
         var player = Bukkit.getPlayerExact(name);

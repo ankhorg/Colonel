@@ -34,7 +34,7 @@ public abstract class Argument<S, A, R> {
      * @param defaultValue 默认值
      * @return {@code this}
      */
-    public Argument<S, A, R> setDefaultValue(@Nullable A defaultValue) {
+    public @NonNull Argument<S, A, R> setDefaultValue(@Nullable A defaultValue) {
         this.defaultValue = defaultValue;
         this.hasDefaultValue = true;
         return this;
@@ -46,7 +46,7 @@ public abstract class Argument<S, A, R> {
      * @param defaultValueGetter 默认值获取器
      * @return {@code this}
      */
-    public Argument<S, A, R> setDefaultValue(@NonNull Function<S, ParseResult<A>> defaultValueGetter) {
+    public @NonNull Argument<S, A, R> setDefaultValue(@NonNull Function<S, ParseResult<A>> defaultValueGetter) {
         this.defaultValueGetter = defaultValueGetter;
         this.hasDefaultValue = true;
         return this;
@@ -58,7 +58,7 @@ public abstract class Argument<S, A, R> {
      * @param failExecutor 参数解析失败时的执行回调
      * @return {@code this}
      */
-    public Argument<S, A, R> setFailExecutor(@Nullable Function<Context<S, R>, R> failExecutor) {
+    public @NonNull Argument<S, A, R> setFailExecutor(@Nullable Function<Context<S, R>, R> failExecutor) {
         this.failExecutor = failExecutor;
         return this;
     }
@@ -69,7 +69,7 @@ public abstract class Argument<S, A, R> {
      * @param failExecutor 无返回值的参数解析失败时的执行回调
      * @return {@code this}
      */
-    public Argument<S, A, R> setNullFailExecutor(@Nullable Consumer<Context<S, R>> failExecutor) {
+    public @NonNull Argument<S, A, R> setNullFailExecutor(@Nullable Consumer<Context<S, R>> failExecutor) {
         this.failExecutor = failExecutor == null ? null : (context) -> {
             failExecutor.accept(context);
             return null;

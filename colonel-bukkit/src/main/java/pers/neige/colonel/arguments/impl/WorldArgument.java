@@ -22,8 +22,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class WorldArgument<S, R> extends Argument<S, World, R> {
     @Override
-    @NonNull
-    public ParseResult<World> parse(@NonNull StringReader input, @Nullable S source) {
+    public @NonNull ParseResult<World> parse(@NonNull StringReader input, @Nullable S source) {
         val start = input.getOffset();
         val name = input.readString();
         var world = Bukkit.getWorld(name);

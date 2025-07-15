@@ -29,8 +29,7 @@ public class LongArgument<S, R> extends Argument<S, Long, R> {
     private final long maximum = Long.MAX_VALUE;
 
     @Override
-    @NonNull
-    public ParseResult<Long> parse(@NonNull StringReader input, @Nullable S source) {
+    public @NonNull ParseResult<Long> parse(@NonNull StringReader input, @Nullable S source) {
         val result = input.readLong();
         if (result == null) {
             return new ParseResult<>(null, false);

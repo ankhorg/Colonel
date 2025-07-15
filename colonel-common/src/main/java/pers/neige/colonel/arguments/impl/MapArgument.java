@@ -28,8 +28,7 @@ public class MapArgument<S, A, R> extends Argument<S, A, R> {
     /**
      * Map 获取器
      */
-    @NonNull
-    private final Supplier<Map<String, A>> mapGetter;
+    private final @NonNull Supplier<Map<String, A>> mapGetter;
 
     public MapArgument(@NonNull Supplier<Map<String, A>> mapGetter) {
         this.nonnull = true;
@@ -37,8 +36,7 @@ public class MapArgument<S, A, R> extends Argument<S, A, R> {
     }
 
     @Override
-    @NonNull
-    public ParseResult<A> parse(@NonNull StringReader input, @Nullable S source) {
+    public @NonNull ParseResult<A> parse(@NonNull StringReader input, @Nullable S source) {
         val start = input.getOffset();
         val key = input.readString();
         if (key.isEmpty()) return new ParseResult<>(null, false);

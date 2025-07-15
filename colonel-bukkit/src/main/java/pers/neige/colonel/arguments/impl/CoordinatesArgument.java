@@ -132,8 +132,7 @@ public class CoordinatesArgument<S, R> extends Argument<S, CoordinatesContainer,
     }
 
     @Override
-    @NonNull
-    public ParseResult<CoordinatesContainer> parse(@NonNull StringReader input, @Nullable S source) {
+    public @NonNull ParseResult<CoordinatesContainer> parse(@NonNull StringReader input, @Nullable S source) {
         val container = Coordinates.parse(input);
         return new ParseResult<>(container, container.getResult() != null);
     }

@@ -29,8 +29,7 @@ public class IntegerArgument<S, R> extends Argument<S, Integer, R> {
     private final int maximum = Integer.MAX_VALUE;
 
     @Override
-    @NonNull
-    public ParseResult<Integer> parse(@NonNull StringReader input, @Nullable S source) {
+    public @NonNull ParseResult<Integer> parse(@NonNull StringReader input, @Nullable S source) {
         val result = input.readInteger();
         if (result == null) {
             return new ParseResult<>(null, false);

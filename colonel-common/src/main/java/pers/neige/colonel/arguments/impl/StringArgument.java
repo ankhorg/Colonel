@@ -48,8 +48,7 @@ public class StringArgument<S, R> extends Argument<S, String, R> {
     }
 
     @Override
-    @NonNull
-    public ParseResult<String> parse(@NonNull StringReader input, @Nullable S source) {
+    public @NonNull ParseResult<String> parse(@NonNull StringReader input, @Nullable S source) {
         val start = input.getOffset();
         val result = this.readAll ? input.readRemaining() : input.readString();
         if (result.length() < minLength || result.length() > maxLength) {
