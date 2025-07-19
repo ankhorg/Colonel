@@ -13,6 +13,7 @@ import java.util.List;
  * 节点链
  */
 @Getter
+@SuppressWarnings("unused")
 public class NodeChain<S, R> {
     /**
      * 依据顺序存储的解析后节点对象

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
  * 节点解析结果
  */
 @Data
+@SuppressWarnings("unused")
 public class ParseResult<T> {
     /**
      * 节点解析结果

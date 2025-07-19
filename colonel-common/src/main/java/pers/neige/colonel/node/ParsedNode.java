@@ -8,8 +8,9 @@ import pers.neige.colonel.arguments.ParseResult;
 /**
  * 解析后节点
  */
-@AllArgsConstructor
 @Getter
+@AllArgsConstructor
+@SuppressWarnings("unused")
 public class ParsedNode<S, A, R> {
     /**
      * 当前节点
