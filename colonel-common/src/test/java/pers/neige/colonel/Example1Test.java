@@ -70,46 +70,46 @@ public class Example1Test {
     @Test
     public void parse() {
         // 后台将打印"文本测试"
-        node.execute(new StringReader("打印文本 文本测试"), null);
+        node.execute(StringReader.of("打印文本 文本测试"), null);
 
-        assertThrows(RuntimeException.class, () -> node.execute(new StringReader("抛出错误"), null));
-        assertThrows(RuntimeException.class, () -> node.execute(new StringReader("抛出错误 " + RUNTIME_EXCEPTION_TYPE), null));
-        assertThrows(InvalidParameterException.class, () -> node.execute(new StringReader("抛出错误 " + INVALID_PARAMETER_EXCEPTION_TYPE), null));
+        assertThrows(RuntimeException.class, () -> node.execute(StringReader.of("抛出错误"), null));
+        assertThrows(RuntimeException.class, () -> node.execute(StringReader.of("抛出错误 " + RUNTIME_EXCEPTION_TYPE), null));
+        assertThrows(InvalidParameterException.class, () -> node.execute(StringReader.of("抛出错误 " + INVALID_PARAMETER_EXCEPTION_TYPE), null));
 
-        assertThrows(RuntimeException.class, () -> node.execute(new StringReader("抛出错误-写法2"), null));
-        assertThrows(RuntimeException.class, () -> node.execute(new StringReader("抛出错误-写法2 " + RUNTIME_EXCEPTION_TYPE), null));
-        assertThrows(InvalidParameterException.class, () -> node.execute(new StringReader("抛出错误-写法2 " + INVALID_PARAMETER_EXCEPTION_TYPE), null));
+        assertThrows(RuntimeException.class, () -> node.execute(StringReader.of("抛出错误-写法2"), null));
+        assertThrows(RuntimeException.class, () -> node.execute(StringReader.of("抛出错误-写法2 " + RUNTIME_EXCEPTION_TYPE), null));
+        assertThrows(InvalidParameterException.class, () -> node.execute(StringReader.of("抛出错误-写法2 " + INVALID_PARAMETER_EXCEPTION_TYPE), null));
 
         // 后台将打印"不存在名为 神秘的错误 的错误类型"
-        node.execute(new StringReader("抛出错误-写法2 神秘的错误"), null);
+        node.execute(StringReader.of("抛出错误-写法2 神秘的错误"), null);
 
         assertEquals(
                 Arrays.asList("打印文本", "抛出错误", "抛出错误-写法2"),
-                node.tab(new StringReader(""), null)
+                node.tab(StringReader.of(""), null)
         );
         assertEquals(
                 Collections.singletonList("打印文本"),
-                node.tab(new StringReader("打印"), null)
+                node.tab(StringReader.of("打印"), null)
         );
         assertEquals(
                 Arrays.asList("抛出错误", "抛出错误-写法2"),
-                node.tab(new StringReader("抛出错误"), null)
+                node.tab(StringReader.of("抛出错误"), null)
         );
         assertEquals(
                 VALID_EXCEPTION_TYPES,
-                node.tab(new StringReader("抛出错误 "), null)
+                node.tab(StringReader.of("抛出错误 "), null)
         );
         assertEquals(
                 Collections.singletonList(RUNTIME_EXCEPTION_TYPE),
-                node.tab(new StringReader("抛出错误 运行时"), null)
+                node.tab(StringReader.of("抛出错误 运行时"), null)
         );
         assertEquals(
                 VALID_EXCEPTION_TYPES,
-                node.tab(new StringReader("抛出错误-写法2 "), null)
+                node.tab(StringReader.of("抛出错误-写法2 "), null)
         );
         assertEquals(
                 Collections.singletonList(RUNTIME_EXCEPTION_TYPE),
-                node.tab(new StringReader("抛出错误-写法2 运行时"), null)
+                node.tab(StringReader.of("抛出错误-写法2 运行时"), null)
         );
     }
 

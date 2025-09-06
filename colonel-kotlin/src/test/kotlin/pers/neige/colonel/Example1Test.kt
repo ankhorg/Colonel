@@ -52,7 +52,12 @@ class Example1Test {
                 literal("抛出错误-写法2") {
                     argument(
                         "错误类型",
-                        ExceptionTypeArgument<Unit, Unit>().setDefaultValue { source -> ParseResult(ExceptionType.RUNTIME_EXCEPTION, true) }) {
+                        ExceptionTypeArgument<Unit, Unit>().setDefaultValue { source ->
+                            ParseResult(
+                                ExceptionType.RUNTIME_EXCEPTION,
+                                true
+                            )
+                        }) {
                         setNullExecutor { context ->
                             val type = context.getArgument<ExceptionType>("错误类型")
                             if (type == ExceptionType.RUNTIME_EXCEPTION) {
@@ -70,52 +75,52 @@ class Example1Test {
     @Test
     fun parse() {
         // 后台将打印"文本测试"
-        node!!.execute(StringReader("打印文本 文本测试"), null)
+        node!!.execute(StringReader.of("打印文本 文本测试"), null)
 
-        assertThrows(RuntimeException::class.java) { node!!.execute(StringReader("抛出错误"), null) }
+        assertThrows(RuntimeException::class.java) { node!!.execute(StringReader.of("抛出错误"), null) }
         assertThrows(RuntimeException::class.java) {
             node!!.execute(
-                StringReader("抛出错误 $RUNTIME_EXCEPTION_TYPE"), null
+                StringReader.of("抛出错误 $RUNTIME_EXCEPTION_TYPE"), null
             )
         }
         assertThrows(InvalidParameterException::class.java) {
             node!!.execute(
-                StringReader("抛出错误 $INVALID_PARAMETER_EXCEPTION_TYPE"), null
+                StringReader.of("抛出错误 $INVALID_PARAMETER_EXCEPTION_TYPE"), null
             )
         }
 
-        assertThrows(RuntimeException::class.java) { node!!.execute(StringReader("抛出错误-写法2"), null) }
+        assertThrows(RuntimeException::class.java) { node!!.execute(StringReader.of("抛出错误-写法2"), null) }
         assertThrows(RuntimeException::class.java) {
             node!!.execute(
-                StringReader("抛出错误-写法2 $RUNTIME_EXCEPTION_TYPE"), null
+                StringReader.of("抛出错误-写法2 $RUNTIME_EXCEPTION_TYPE"), null
             )
         }
         assertThrows(InvalidParameterException::class.java) {
             node!!.execute(
-                StringReader("抛出错误-写法2 $INVALID_PARAMETER_EXCEPTION_TYPE"), null
+                StringReader.of("抛出错误-写法2 $INVALID_PARAMETER_EXCEPTION_TYPE"), null
             )
         }
 
         assertEquals(
-            mutableListOf<String?>("打印文本", "抛出错误", "抛出错误-写法2"), node!!.tab(StringReader(""), null)
+            mutableListOf<String?>("打印文本", "抛出错误", "抛出错误-写法2"), node!!.tab(StringReader.of(""), null)
         )
         assertEquals(
-            mutableListOf<String?>("打印文本"), node!!.tab(StringReader("打印"), null)
+            mutableListOf<String?>("打印文本"), node!!.tab(StringReader.of("打印"), null)
         )
         assertEquals(
-            mutableListOf<String?>("抛出错误", "抛出错误-写法2"), node!!.tab(StringReader("抛出错误"), null)
+            mutableListOf<String?>("抛出错误", "抛出错误-写法2"), node!!.tab(StringReader.of("抛出错误"), null)
         )
         assertEquals(
-            VALID_EXCEPTION_TYPES, node!!.tab(StringReader("抛出错误 "), null)
+            VALID_EXCEPTION_TYPES, node!!.tab(StringReader.of("抛出错误 "), null)
         )
         assertEquals(
-            mutableListOf<String?>(RUNTIME_EXCEPTION_TYPE), node!!.tab(StringReader("抛出错误 运行时"), null)
+            mutableListOf<String?>(RUNTIME_EXCEPTION_TYPE), node!!.tab(StringReader.of("抛出错误 运行时"), null)
         )
         assertEquals(
-            VALID_EXCEPTION_TYPES, node!!.tab(StringReader("抛出错误-写法2 "), null)
+            VALID_EXCEPTION_TYPES, node!!.tab(StringReader.of("抛出错误-写法2 "), null)
         )
         assertEquals(
-            mutableListOf<String?>(RUNTIME_EXCEPTION_TYPE), node!!.tab(StringReader("抛出错误-写法2 运行时"), null)
+            mutableListOf<String?>(RUNTIME_EXCEPTION_TYPE), node!!.tab(StringReader.of("抛出错误-写法2 运行时"), null)
         )
     }
 

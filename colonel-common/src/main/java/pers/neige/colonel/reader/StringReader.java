@@ -6,7 +6,10 @@ import org.jetbrains.annotations.Nullable;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collection;
 import java.util.Set;
+
+import static pers.neige.colonel.reader.SingleSeparatorStringReader.DEFAULT_SEPARATOR;
 
 /**
  * 字符串解析器
@@ -14,49 +17,71 @@ import java.util.Set;
 @Getter
 @Setter
 @SuppressWarnings("unused")
-public class StringReader {
-    /**
-     * 默认分隔符
-     */
-    public static final char DEFAULT_SEPARATOR = ' ';
+public abstract class StringReader {
     /**
      * 默认转义符
      */
     public static final char DEFAULT_ESCAPE = '\\';
 
-    private static final int INTEGER_POSITIVE_LIMIT = -Integer.MAX_VALUE;
-    private static final int INTEGER_NEGATIVE_LIMIT = Integer.MIN_VALUE;
-    private static final int INTEGER_MULTMIN = INTEGER_POSITIVE_LIMIT / 10;
+    protected static final int INTEGER_POSITIVE_LIMIT = -Integer.MAX_VALUE;
+    protected static final int INTEGER_NEGATIVE_LIMIT = Integer.MIN_VALUE;
+    protected static final int INTEGER_MULTMIN = INTEGER_POSITIVE_LIMIT / 10;
 
-    private static final long LONG_POSITIVE_LIMIT = -Long.MAX_VALUE;
-    private static final long LONG_NEGATIVE_LIMIT = Long.MIN_VALUE;
-    private static final long LONG_MULTMIN = LONG_POSITIVE_LIMIT / 10;
+    protected static final long LONG_POSITIVE_LIMIT = -Long.MAX_VALUE;
+    protected static final long LONG_NEGATIVE_LIMIT = Long.MIN_VALUE;
+    protected static final long LONG_MULTMIN = LONG_POSITIVE_LIMIT / 10;
 
     /**
      * 待读取字符串
      */
-    private final @NonNull String string;
-    /**
-     * 分隔符
-     */
-    private final char separator;
+    protected final @NonNull String string;
     /**
      * 转义符
      */
-    private final char escape;
+    protected final char escape;
     /**
      * 当前偏移量
      */
-    private int offset;
+    protected int offset;
 
     /**
-     * 分隔符取默认值 {@link StringReader#DEFAULT_SEPARATOR}<br>
      * 分隔符取默认值 {@link StringReader#DEFAULT_ESCAPE}
      *
      * @param string 待读取字符串
      */
-    public StringReader(@NonNull String string) {
-        this(string, DEFAULT_SEPARATOR, DEFAULT_ESCAPE);
+    protected StringReader(@NonNull String string) {
+        this(string, DEFAULT_ESCAPE);
+    }
+
+    /**
+     * 偏移量取 0
+     *
+     * @param string 待读取字符串
+     * @param escape 转义符
+     */
+    protected StringReader(@NonNull String string, char escape) {
+        this(string, escape, 0);
+    }
+
+    /**
+     * @param string 待读取字符串
+     * @param escape 转义符
+     * @param offset 偏移量
+     */
+    protected StringReader(@NonNull String string, char escape, int offset) {
+        this.string = string;
+        this.offset = offset;
+        this.escape = escape;
+    }
+
+    /**
+     * 分隔符取默认值 {@link SingleSeparatorStringReader#DEFAULT_SEPARATOR}<br>
+     * 分隔符取默认值 {@link SingleSeparatorStringReader#DEFAULT_ESCAPE}
+     *
+     * @param string 待读取字符串
+     */
+    public static @NonNull StringReader of(@NonNull String string) {
+        return new SingleSeparatorStringReader(string, DEFAULT_SEPARATOR, DEFAULT_ESCAPE);
     }
 
     /**
@@ -66,8 +91,8 @@ public class StringReader {
      * @param separator 分隔符
      * @param escape    转义符
      */
-    public StringReader(@NonNull String string, char separator, char escape) {
-        this(string, separator, escape, 0);
+    public static @NonNull StringReader of(@NonNull String string, char separator, char escape) {
+        return new SingleSeparatorStringReader(string, separator, escape, 0);
     }
 
     /**
@@ -76,21 +101,75 @@ public class StringReader {
      * @param escape    转义符
      * @param offset    偏移量
      */
-    public StringReader(@NonNull String string, char separator, char escape, int offset) {
-        this.string = string;
-        this.offset = offset;
-        this.separator = separator;
-        this.escape = escape;
+    public static @NonNull StringReader of(@NonNull String string, char separator, char escape, int offset) {
+        return new SingleSeparatorStringReader(string, separator, escape, offset);
     }
+
+    /**
+     * 偏移量取 0
+     *
+     * @param string        待读取字符串
+     * @param separators    分隔符
+     * @param escape        转义符
+     * @param defensiveCopy 如果为 {@code true}，将对传入的 {@code separators} 集合进行防御性复制，<br>
+     *                      以防止外部修改影响读取器实例，这是更安全的选择。<br>
+     *                      如果为 {@code false}，将直接使用传入的集合引用以提高性能。<br>
+     *                      <b>警告:</b> 当设为 {@code false} 时，调用者必须保证在读取器的生命周期内，<br>
+     *                      不会修改传入的 {@code separators} 集合。
+     */
+    public static @NonNull StringReader of(@NonNull String string, @NonNull Set<Character> separators, char escape, boolean defensiveCopy) {
+        return new MultiSeparatorStringReader(string, separators, escape, 0, defensiveCopy);
+    }
+
+    /**
+     * @param string        待读取字符串
+     * @param separators    分隔符
+     * @param escape        转义符
+     * @param offset        偏移量
+     * @param defensiveCopy 如果为 {@code true}，将对传入的 {@code separators} 集合进行防御性复制，<br>
+     *                      以防止外部修改影响读取器实例，这是更安全的选择。<br>
+     *                      如果为 {@code false}，将直接使用传入的集合引用以提高性能。<br>
+     *                      <b>警告:</b> 当设为 {@code false} 时，调用者必须保证在读取器的生命周期内，<br>
+     *                      不会修改传入的 {@code separators} 集合。
+     */
+    public static @NonNull StringReader of(@NonNull String string, @NonNull Set<Character> separators, char escape, int offset, boolean defensiveCopy) {
+        return new MultiSeparatorStringReader(string, separators, escape, offset, defensiveCopy);
+    }
+
+    /**
+     * 判断一个字符是否为分隔符
+     *
+     * @param c 待判断字符
+     * @return 待判断字符是否为分隔符
+     */
+    public abstract boolean isSeparator(char c);
+
+    /**
+     * 判断一组字符是否包含分隔符
+     *
+     * @param chars 待判断字符组
+     * @return 待判断字符是否为分隔符
+     */
+    public abstract boolean containsSeparator(@NonNull Collection<Character> chars);
+
+    /**
+     * 根据当前 StringReader 的分隔符和转义符设置, 为传入的字符串新建一个读取器
+     *
+     * @param string 待读取字符串
+     * @return StringReader
+     */
+    public abstract @NonNull StringReader newReaderWithSameConfig(@NonNull String string);
 
     /**
      * 根据当前状态复制一个 StringReader
      *
      * @return StringReader 副本
      */
-    public StringReader copy() {
-        return new StringReader(string, separator, escape, offset);
-    }
+    public abstract @NonNull StringReader copy();
+
+    public abstract char getSeparator();
+
+    public abstract @NonNull Set<Character> getSeparators();
 
     /**
      * 当前偏移位置是否存在字符
@@ -142,7 +221,7 @@ public class StringReader {
      */
     public boolean skipSeparator() {
         boolean skipped = false;
-        while (canRead() && current() == separator) {
+        while (canRead() && isSeparator(current())) {
             skipped = true;
             skip();
         }
@@ -293,10 +372,10 @@ public class StringReader {
                     continue;
                 }
 
-                if (current == separator) {
+                if (isSeparator(current)) {
                     break;
                 }
-            } else if (current != escape && current != separator) {
+            } else if (current != escape && !isSeparator(current)) {
                 result.append(escape);
             }
 
@@ -376,7 +455,7 @@ public class StringReader {
             }
         }
 
-        if (digitsStart == offset || (canRead() && current() != separator)) {
+        if (digitsStart == offset || (canRead() && !isSeparator(current()))) {
             offset = start;
             return null;
         }
@@ -476,7 +555,7 @@ public class StringReader {
             }
         }
 
-        if (digitsStart == offset || (canRead() && current() != separator) || (hasDot && offset == digitsStart + 1)) {
+        if (digitsStart == offset || (canRead() && !isSeparator(current())) || (hasDot && offset == digitsStart + 1)) {
             offset = start;
             return null;
         }
@@ -624,7 +703,7 @@ public class StringReader {
             }
         }
 
-        if (digitsStart == offset || (canRead() && current() != separator)) {
+        if (digitsStart == offset || (canRead() && !isSeparator(current()))) {
             offset = start;
             return null;
         }
@@ -701,7 +780,7 @@ public class StringReader {
             }
         }
 
-        if (digitsStart == offset || (canRead() && current() != separator)) {
+        if (digitsStart == offset || (canRead() && !isSeparator(current()))) {
             offset = start;
             return def;
         }
@@ -777,7 +856,7 @@ public class StringReader {
             }
         }
 
-        if (digitsStart == offset || (canRead() && current() != separator)) {
+        if (digitsStart == offset || (canRead() && !isSeparator(current()))) {
             offset = start;
             return null;
         }
@@ -854,7 +933,7 @@ public class StringReader {
             }
         }
 
-        if (digitsStart == offset || (canRead() && current() != separator)) {
+        if (digitsStart == offset || (canRead() && !isSeparator(current()))) {
             offset = start;
             return def;
         }

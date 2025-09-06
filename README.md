@@ -12,16 +12,16 @@
 
 ```kotlin
 repositories {
-  maven("https://r.irepo.space/maven/")
+    maven("https://r.irepo.space/maven/")
 }
 
 dependencies {
-  implementation("pers.neige.colonel:colonel-common:[latest release version]")
+    implementation("pers.neige.colonel:colonel-common:[latest release version]")
 //  implementation("pers.neige.colonel:colonel-common:[latest release version]") {
 //    exclude(group = "org.neosearch.stringsearcher")
 //  }
-  implementation("pers.neige.colonel:colonel-kotlin:[latest release version]")
-  implementation("pers.neige.colonel:colonel-bukkit:[latest release version]")
+    implementation("pers.neige.colonel:colonel-kotlin:[latest release version]")
+    implementation("pers.neige.colonel:colonel-bukkit:[latest release version]")
 }
 ```
 
@@ -48,7 +48,6 @@ package pers.neige.colonel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -116,46 +115,46 @@ public class Example1Test {
     @Test
     public void parse() {
         // 后台将打印"文本测试"
-        node.execute(new StringReader("打印文本 文本测试"), null);
+        node.execute(StringReader.of("打印文本 文本测试"), null);
 
-        assertThrows(RuntimeException.class, () -> node.execute(new StringReader("抛出错误"), null));
-        assertThrows(RuntimeException.class, () -> node.execute(new StringReader("抛出错误 " + RUNTIME_EXCEPTION_TYPE), null));
-        assertThrows(InvalidParameterException.class, () -> node.execute(new StringReader("抛出错误 " + INVALID_PARAMETER_EXCEPTION_TYPE), null));
+        assertThrows(RuntimeException.class, () -> node.execute(StringReader.of("抛出错误"), null));
+        assertThrows(RuntimeException.class, () -> node.execute(StringReader.of("抛出错误 " + RUNTIME_EXCEPTION_TYPE), null));
+        assertThrows(InvalidParameterException.class, () -> node.execute(StringReader.of("抛出错误 " + INVALID_PARAMETER_EXCEPTION_TYPE), null));
 
-        assertThrows(RuntimeException.class, () -> node.execute(new StringReader("抛出错误-写法2"), null));
-        assertThrows(RuntimeException.class, () -> node.execute(new StringReader("抛出错误-写法2 " + RUNTIME_EXCEPTION_TYPE), null));
-        assertThrows(InvalidParameterException.class, () -> node.execute(new StringReader("抛出错误-写法2 " + INVALID_PARAMETER_EXCEPTION_TYPE), null));
+        assertThrows(RuntimeException.class, () -> node.execute(StringReader.of("抛出错误-写法2"), null));
+        assertThrows(RuntimeException.class, () -> node.execute(StringReader.of("抛出错误-写法2 " + RUNTIME_EXCEPTION_TYPE), null));
+        assertThrows(InvalidParameterException.class, () -> node.execute(StringReader.of("抛出错误-写法2 " + INVALID_PARAMETER_EXCEPTION_TYPE), null));
 
         // 后台将打印"不存在名为 神秘的错误 的错误类型"
-        node.execute(new StringReader("抛出错误-写法2 神秘的错误"), null);
-      
+        node.execute(StringReader.of("抛出错误-写法2 神秘的错误"), null);
+
         assertEquals(
                 Arrays.asList("打印文本", "抛出错误", "抛出错误-写法2"),
-                node.tab(new StringReader(""), null)
+                node.tab(StringReader.of(""), null)
         );
         assertEquals(
                 Collections.singletonList("打印文本"),
-                node.tab(new StringReader("打印"), null)
+                node.tab(StringReader.of("打印"), null)
         );
         assertEquals(
                 Arrays.asList("抛出错误", "抛出错误-写法2"),
-                node.tab(new StringReader("抛出错误"), null)
+                node.tab(StringReader.of("抛出错误"), null)
         );
         assertEquals(
                 VALID_EXCEPTION_TYPES,
-                node.tab(new StringReader("抛出错误 "), null)
+                node.tab(StringReader.of("抛出错误 "), null)
         );
         assertEquals(
                 Collections.singletonList(RUNTIME_EXCEPTION_TYPE),
-                node.tab(new StringReader("抛出错误 运行时"), null)
+                node.tab(StringReader.of("抛出错误 运行时"), null)
         );
         assertEquals(
                 VALID_EXCEPTION_TYPES,
-                node.tab(new StringReader("抛出错误-写法2 "), null)
+                node.tab(StringReader.of("抛出错误-写法2 "), null)
         );
         assertEquals(
                 Collections.singletonList(RUNTIME_EXCEPTION_TYPE),
-                node.tab(new StringReader("抛出错误-写法2 运行时"), null)
+                node.tab(StringReader.of("抛出错误-写法2 运行时"), null)
         );
     }
 
@@ -220,11 +219,12 @@ public class Example1Test {
 以 `Bukkit` 插件常用场景为例：
 
 - 对于服务器指令：
-  - `S` 应该为 `@NonNull CommandSender`，可能是后台（`ConsoleSender`），也可能是玩家（`Player`）。
-  - `R` 代表 `@NonNull Boolean`，代表指令执行结果，也可以是 java 中的 `Void` 或 kotlin 中的 `Unit`，因为指令的返回值其实没什么用，我喜欢统统返回 `true`。
+    - `S` 应该为 `@NonNull CommandSender`，可能是后台（`ConsoleSender`），也可能是玩家（`Player`）。
+    - `R` 代表 `@NonNull Boolean`，代表指令执行结果，也可以是 java 中的 `Void` 或 kotlin 中的 `Unit`
+      ，因为指令的返回值其实没什么用，我喜欢统统返回 `true`。
 - 对于 `PlaceholderAPI` 变量：
-  - `S` 应该为 `@Nullable OfflinePlayer`，可能是 `null`，可能是离线玩家（`OfflinePlayer`），也可能是在线玩家（`Player`）。
-  - `R` 代表 `@Nullable String`，代表变量解析结果。
+    - `S` 应该为 `@Nullable OfflinePlayer`，可能是 `null`，可能是离线玩家（`OfflinePlayer`），也可能是在线玩家（`Player`）。
+    - `R` 代表 `@Nullable String`，代表变量解析结果。
 
 对于此次示例场景，执行源和执行结果都是不必要的，因此我将二者指定为 `Void` 类型，以 `null` 作为执行源，并返回 `null` 作为执行结果。
 
@@ -245,7 +245,7 @@ public class Example1Test {
 
 比如，我现在输入的是"抛出错误 "，此时，`rawTab` 方法和 `tab` 方法返回同样的 `List<String>`：`["运行时错误", "非法参数错误"]`
 
-但如果我输入的是"抛出错误 运行"，此时，`rawTab` 方法应返回 `["运行时错误", "非法参数错误"]`，而 `tab` 方法将返回 `["运行时错误"]`
+但如果我输入的是"抛出错误 运行"，此时，`rawTab` 方法应返回 `["运行时错误", "非法参数错误"]`，而 `tab` 方法将返回`["运行时错误"]`
 
 对于这两个方法的 `@NonNull String remaining` 参数，上述的两种情况应该分别为空字符串和 `运行` 文本。
 
@@ -260,6 +260,7 @@ public class Example1Test {
 具体参照示例方法注释：
 
 ```java
+
 @Override
 @NonNull
 public ParseResult<ExceptionType> parse(@NonNull StringReader input, @Nullable S source) {
@@ -288,15 +289,18 @@ public ParseResult<ExceptionType> parse(@NonNull StringReader input, @Nullable S
 
 ## 参数解析失败
 
-参数解析失败时，建议回滚偏移量，因为如果你需要在 `failExecutor` 中告知执行源异常参数的内容，你需要通过 `StringReader` 获取错误的参数文本内容。
+参数解析失败时，建议回滚偏移量，因为如果你需要在 `failExecutor` 中告知执行源异常参数的内容，你需要通过 `StringReader`
+获取错误的参数文本内容。
 
 比如你正在解析 `test 123` 文本，现在偏移量位于 `123` 前面，你需要读取一个整数，那么自然，你可以读取并返回 `123`。
 
-但如果当前输入的是 `test 123x` 文本，很明显 `123x` 并不对应一个合法的整数，所以你需要返回 `null` 并将 `ParseResult` 构造器的第二个参数设置为 `false`
+但如果当前输入的是 `test 123x` 文本，很明显 `123x` 并不对应一个合法的整数，所以你需要返回 `null` 并将 `ParseResult`
+构造器的第二个参数设置为 `false`
 
 那么执行源该如何得知问题文本是 `123x` 呢？正如示例代码所示：
 
 ```java
+
 @Getter
 public static class ExceptionTypeArgument<S, R> extends Argument<S, ExceptionType, R> {
     public ExceptionTypeArgument() {
@@ -317,6 +321,7 @@ public static class ExceptionTypeArgument<S, R> extends Argument<S, ExceptionTyp
 当然，你也可以通过其他手段达成这个目的，比如你有一个预期结果为 `Integer` 的参数，那么你可以编写一个容器类：
 
 ```java
+
 @Data
 public static class IntegerContainer {
     private final @NonNull String text;
@@ -338,7 +343,8 @@ public static class IntegerContainer {
 
 我给出了两种参数默认值的填写方法，一种是直接设置默认值对象，一种是设置一个用于获取默认值的 `Function`。
 
-在上面分别体现为 `new StringArgument<Void, Void>().setDefaultValue(RUNTIME_EXCEPTION_TYPE)` 和 `new ExceptionTypeArgument<Void, Void>().setDefaultValue((source) -> new ParseResult<>(ExceptionType.RUNTIME_EXCEPTION, true)))`
+在上面分别体现为 `new StringArgument<Void, Void>().setDefaultValue(RUNTIME_EXCEPTION_TYPE)` 和
+`new ExceptionTypeArgument<Void, Void>().setDefaultValue((source) -> new ParseResult<>(ExceptionType.RUNTIME_EXCEPTION, true)))`
 
 直接设置默认值的方法适用于固定默认值的情况，而传入 `Function` 的方法适用于默认值与执行源相关的情况。
 
@@ -346,7 +352,8 @@ public static class IntegerContainer {
 
 ## 执行器
 
-示例代码中，我只使用了 `setNullExecutor` 方法设置无返回值的执行器，在实际使用过程中（如变量解析），你可以使用 `setExecutor` 方法设置带有返回值的执行器。
+示例代码中，我只使用了 `setNullExecutor` 方法设置无返回值的执行器，在实际使用过程中（如变量解析），你可以使用 `setExecutor`
+方法设置带有返回值的执行器。
 
 ## Kotlin 实现
 
@@ -382,7 +389,12 @@ node = root<Unit, Unit>("root") {
     literal("抛出错误-写法2") {
         argument(
             "错误类型",
-            ExceptionTypeArgument<Unit, Unit>().setDefaultValue { source -> ParseResult(ExceptionType.RUNTIME_EXCEPTION, true) }
+            ExceptionTypeArgument<Unit, Unit>().setDefaultValue { source ->
+                ParseResult(
+                    ExceptionType.RUNTIME_EXCEPTION,
+                    true
+                )
+            }
         ) {
             setNullExecutor { context ->
                 val type = context.getArgument<ExceptionType>("错误类型")

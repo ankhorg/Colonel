@@ -40,7 +40,7 @@ public class MapArgument<S, A, R> extends Argument<S, A, R> {
         val start = input.getOffset();
         val key = input.readString();
         if (key.isEmpty()) return new ParseResult<>(null, false);
-        A value = mapGetter.get().get(key);
+        val value = mapGetter.get().get(key);
         if (value == null && nonnull) {
             input.setOffset(start);
             return new ParseResult<>(null, false);

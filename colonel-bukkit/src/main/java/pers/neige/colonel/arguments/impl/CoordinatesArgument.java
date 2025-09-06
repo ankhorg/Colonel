@@ -29,104 +29,106 @@ public class CoordinatesArgument<S, R> extends Argument<S, CoordinatesContainer,
     private final static char ABSOLUTE_Y_SYMBOL = 'y';
     private final static char ABSOLUTE_Z_SYMBOL = 'z';
 
-    private static @NonNull List<String> getDefaultSuggestions(char separator, char escape) {
+    private static @NonNull List<String> getDefaultSuggestions(@NonNull StringReader reader) {
         val result = new ArrayList<String>();
-        result.add(getDefaultRelativeSuggestion(separator, escape));
-        result.add(getDefaultLocalSuggestion(separator, escape));
-        result.add(getDefaultAbsoluteSuggestion(separator, escape));
+        result.add(getDefaultRelativeSuggestion(reader));
+        result.add(getDefaultLocalSuggestion(reader));
+        result.add(getDefaultAbsoluteSuggestion(reader));
         return result;
     }
 
-    private static @NonNull String getDefaultRelativeSuggestion(char separator, char escape) {
-        return getLastRelativeArg(separator, escape) +
+    private static @NonNull String getDefaultRelativeSuggestion(@NonNull StringReader reader) {
+        val separator = reader.getSeparator();
+        return getLastRelativeArg(reader) +
                 separator +
-                getLastRelativeArg(separator, escape) +
+                getLastRelativeArg(reader) +
                 separator +
-                getLastRelativeArg(separator, escape);
+                getLastRelativeArg(reader);
     }
 
-    private static @NonNull String getDefaultLocalSuggestion(char separator, char escape) {
-        return getLastLocalArg(separator, escape) +
+    private static @NonNull String getDefaultLocalSuggestion(@NonNull StringReader reader) {
+        val separator = reader.getSeparator();
+        return getLastLocalArg(reader) +
                 separator +
-                getLastLocalArg(separator, escape) +
+                getLastLocalArg(reader) +
                 separator +
-                getLastLocalArg(separator, escape);
+                getLastLocalArg(reader);
     }
 
-    private static @NonNull String getDefaultAbsoluteSuggestion(char separator, char escape) {
+    private static @NonNull String getDefaultAbsoluteSuggestion(@NonNull StringReader reader) {
         val builder = new StringBuilder();
-        val needEscape = ABSOLUTE_X_SYMBOL == separator || ABSOLUTE_X_SYMBOL == escape;
-        if (needEscape) builder.append(escape);
+        val needEscape = reader.isSeparator(ABSOLUTE_X_SYMBOL) || reader.isSeparator(ABSOLUTE_X_SYMBOL);
+        if (needEscape) builder.append(reader.getEscape());
         builder.append(ABSOLUTE_X_SYMBOL);
-        builder.append(separator);
-        builder.append(getLastTwoAbsoluteArgs(separator, escape));
+        builder.append(reader.getSeparator());
+        builder.append(getLastTwoAbsoluteArgs(reader));
         return builder.toString();
     }
 
-    private static @NonNull String getLastTwoRelativeArgs(char separator, char escape) {
-        return getLastRelativeArg(separator, escape) +
-                separator +
-                getLastRelativeArg(separator, escape);
+    private static @NonNull String getLastTwoRelativeArgs(@NonNull StringReader reader) {
+        return getLastRelativeArg(reader) +
+                reader.getSeparator() +
+                getLastRelativeArg(reader);
     }
 
-    private static @NonNull String getLastTwoLocalArgs(char separator, char escape) {
-        return getLastLocalArg(separator, escape) +
-                separator +
-                getLastLocalArg(separator, escape);
+    private static @NonNull String getLastTwoLocalArgs(@NonNull StringReader reader) {
+        return getLastLocalArg(reader) +
+                reader.getSeparator() +
+                getLastLocalArg(reader);
     }
 
-    private static @NonNull String getLastTwoAbsoluteArgs(char separator, char escape) {
+    private static @NonNull String getLastTwoAbsoluteArgs(@NonNull StringReader reader) {
         val builder = new StringBuilder();
-        val needEscape = ABSOLUTE_Y_SYMBOL == separator || ABSOLUTE_Y_SYMBOL == escape;
-        if (needEscape) builder.append(escape);
+        val needEscape = reader.isSeparator(ABSOLUTE_Y_SYMBOL) || reader.isSeparator(ABSOLUTE_Y_SYMBOL);
+        if (needEscape) builder.append(reader.getEscape());
         builder.append(ABSOLUTE_Y_SYMBOL);
-        builder.append(separator);
-        builder.append(getLastAbsoluteArg(separator, escape));
+        builder.append(reader.getSeparator());
+        builder.append(getLastAbsoluteArg(reader));
         return builder.toString();
     }
 
-    private static @NonNull String getLastRelativeArg(char separator, char escape) {
+    private static @NonNull String getLastRelativeArg(@NonNull StringReader reader) {
         val builder = new StringBuilder();
-        val needEscape = RELATIVE_SYMBOL == separator || RELATIVE_SYMBOL == escape;
-        if (needEscape) builder.append(escape);
+        val needEscape = reader.isSeparator(RELATIVE_SYMBOL) || reader.isSeparator(RELATIVE_SYMBOL);
+        if (needEscape) builder.append(reader.getEscape());
         builder.append(RELATIVE_SYMBOL);
         return builder.toString();
     }
 
-    private static @NonNull String getLastLocalArg(char separator, char escape) {
+    private static @NonNull String getLastLocalArg(@NonNull StringReader reader) {
         val builder = new StringBuilder();
-        val needEscape = LOCAL_SYMBOL == separator || LOCAL_SYMBOL == escape;
-        if (needEscape) builder.append(escape);
+        val needEscape = reader.isSeparator(LOCAL_SYMBOL) || reader.isSeparator(LOCAL_SYMBOL);
+        if (needEscape) builder.append(reader.getEscape());
         builder.append(LOCAL_SYMBOL);
         return builder.toString();
     }
 
-    private static @NonNull String getLastAbsoluteArg(char separator, char escape) {
+    private static @NonNull String getLastAbsoluteArg(@NonNull StringReader reader) {
         val builder = new StringBuilder();
-        val needEscape = ABSOLUTE_Z_SYMBOL == separator || ABSOLUTE_Z_SYMBOL == escape;
-        if (needEscape) builder.append(escape);
+        val needEscape = reader.isSeparator(ABSOLUTE_Z_SYMBOL) || reader.isSeparator(ABSOLUTE_Z_SYMBOL);
+        if (needEscape) builder.append(reader.getEscape());
         builder.append(ABSOLUTE_Z_SYMBOL);
         return builder.toString();
     }
 
-    private static @NonNull List<String> loadLastTwoArgs(char separator, char escape, @NonNull StringBuilder builder, @NonNull LocationType type) {
+    private static @NonNull List<String> loadLastTwoArgs(@NonNull StringReader reader, @NonNull StringBuilder builder, @NonNull LocationType type) {
         if (type == LocationType.RELATIVE) {
-            builder.append(getLastTwoRelativeArgs(separator, escape));
+            builder.append(getLastTwoRelativeArgs(reader));
         } else if (type == LocationType.LOCAL) {
-            builder.append(getLastTwoLocalArgs(separator, escape));
+            builder.append(getLastTwoLocalArgs(reader));
         } else {
-            builder.append(getLastTwoAbsoluteArgs(separator, escape));
+            builder.append(getLastTwoAbsoluteArgs(reader));
         }
         return Collections.singletonList(builder.toString());
     }
 
-    private static @NonNull List<String> loadLastArg(char separator, char escape, @NonNull StringBuilder builder, @NonNull LocationType type) {
+    private static @NonNull List<String> loadLastArg(@NonNull StringReader reader, @NonNull StringBuilder builder, @NonNull LocationType type) {
         if (type == LocationType.RELATIVE) {
-            builder.append(getLastRelativeArg(separator, escape));
+            builder.append(getLastRelativeArg(reader));
         } else if (type == LocationType.LOCAL) {
-            builder.append(getLastLocalArg(separator, escape));
+            builder.append(getLastLocalArg(reader));
         } else {
-            builder.append(getLastAbsoluteArg(separator, escape));
+            builder.append(getLastAbsoluteArg(reader));
         }
         return Collections.singletonList(builder.toString());
     }
@@ -143,32 +145,32 @@ public class CoordinatesArgument<S, R> extends Argument<S, CoordinatesContainer,
         val separator = input.getSeparator();
         val escape = input.getEscape();
         if (remaining.isEmpty()) {
-            return getDefaultSuggestions(separator, escape);
+            return getDefaultSuggestions(input);
         }
         val builder = new StringBuilder();
-        val reader = new StringReader(remaining, separator, escape);
+        val reader = input.newReaderWithSameConfig(remaining);
 
         val type = Coordinates.readLocationType(reader);
         if (!reader.canRead()) {
             if (type == LocationType.RELATIVE) {
-                return Collections.singletonList(getDefaultRelativeSuggestion(separator, escape));
+                return Collections.singletonList(getDefaultRelativeSuggestion(reader));
             } else if (type == LocationType.LOCAL) {
-                return Collections.singletonList(getDefaultLocalSuggestion(separator, escape));
+                return Collections.singletonList(getDefaultLocalSuggestion(reader));
             }
-            return getDefaultSuggestions(separator, escape);
+            return getDefaultSuggestions(reader);
         }
         var d = reader.readDouble();
         if (d != null && !reader.canRead()) {
             builder.append(reader.peekPrevious());
             builder.append(separator);
-            return loadLastTwoArgs(separator, escape, builder, type);
+            return loadLastTwoArgs(reader, builder, type);
         }
         if (d == null && reader.current() != reader.getSeparator()) {
             return new ArrayList<>();
         }
         reader.skipSeparator();
         if (!reader.canRead()) {
-            return loadLastTwoArgs(separator, escape, builder, type);
+            return loadLastTwoArgs(reader, builder, type);
         }
 
         var nextType = Coordinates.readLocationType(reader);
@@ -176,23 +178,23 @@ public class CoordinatesArgument<S, R> extends Argument<S, CoordinatesContainer,
             if (type != LocationType.ABSOLUTE) {
                 reader.skip(-1);
             }
-            return loadLastTwoArgs(separator, escape, builder, type);
+            return loadLastTwoArgs(reader, builder, type);
         }
         if (!reader.canRead()) {
-            return loadLastTwoArgs(separator, escape, builder, type);
+            return loadLastTwoArgs(reader, builder, type);
         }
         d = reader.readDouble();
         if (d != null && !reader.canRead()) {
             builder.append(reader.peekPrevious());
             builder.append(separator);
-            return loadLastArg(separator, escape, builder, type);
+            return loadLastArg(reader, builder, type);
         }
         if (d == null && reader.current() != reader.getSeparator()) {
             return new ArrayList<>();
         }
         reader.skipSeparator();
         if (!reader.canRead()) {
-            return loadLastArg(separator, escape, builder, type);
+            return loadLastArg(reader, builder, type);
         }
 
         nextType = Coordinates.readLocationType(reader);
@@ -200,7 +202,7 @@ public class CoordinatesArgument<S, R> extends Argument<S, CoordinatesContainer,
             if (type != LocationType.ABSOLUTE) {
                 reader.skip(-1);
             }
-            return loadLastArg(separator, escape, builder, type);
+            return loadLastArg(reader, builder, type);
         }
         reader.readDouble();
         return new ArrayList<>();

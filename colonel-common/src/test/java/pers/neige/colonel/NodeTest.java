@@ -58,79 +58,79 @@ public class NodeTest {
 
     @Test
     public void parse() {
-        var result = node.parseExecuteContext(new StringReader(""), null);
+        var result = node.parseExecuteContext(StringReader.of(""), null);
         assertEquals(0, result.size());
         assertEquals("啥也妹有", result.execute());
 
-        result = node.parseExecuteContext(new StringReader("hello hello"), null);
+        result = node.parseExecuteContext(StringReader.of("hello hello"), null);
         assertEquals(0, result.size());
 
-        result = node.parseExecuteContext(new StringReader("hello1"), null);
+        result = node.parseExecuteContext(StringReader.of("hello1"), null);
         assertEquals(1, result.size());
         assertEquals("hello1", result.getArgument("hello1"));
 
-        result = node.parseExecuteContext(new StringReader("hello1 hello"), null);
+        result = node.parseExecuteContext(StringReader.of("hello1 hello"), null);
         assertEquals(1, result.size());
         assertEquals("hello1", result.getArgument("hello1"));
 
-        result = node.parseExecuteContext(new StringReader("hello2 world1"), null);
+        result = node.parseExecuteContext(StringReader.of("hello2 world1"), null);
         assertEquals(2, result.size());
         assertEquals("hello2", result.getArgument("hello2"));
         assertEquals("world1", result.getArgument("world1"));
 
-        result = node.parseExecuteContext(new StringReader("hello2 world1 hello"), null);
+        result = node.parseExecuteContext(StringReader.of("hello2 world1 hello"), null);
         assertEquals(2, result.size());
         assertEquals("hello2", result.getArgument("hello2"));
         assertEquals("world1", result.getArgument("world1"));
 
-        result = node.parseExecuteContext(new StringReader("hello3 map1"), null);
+        result = node.parseExecuteContext(StringReader.of("hello3 map1"), null);
         assertEquals(2, result.size());
         assertEquals("hello3", result.getArgument("hello3"));
         assertNull(result.getArgument("map1"));
 
-        result = node.parseExecuteContext(new StringReader("hello3 test1"), null);
+        result = node.parseExecuteContext(StringReader.of("hello3 test1"), null);
         assertEquals(2, result.size());
         assertEquals("hello3", result.getArgument("hello3"));
         assertEquals(1, result.<Integer>getArgument("map1"));
 
-        result = node.parseExecuteContext(new StringReader("hello4 123123"), null);
+        result = node.parseExecuteContext(StringReader.of("hello4 123123"), null);
         assertEquals(2, result.size());
         assertEquals("hello4", result.getArgument("hello4"));
         assertEquals(123123, result.<Integer>getArgument("int1"));
 
-        result = node.parseExecuteContext(new StringReader("hello4 test"), null);
+        result = node.parseExecuteContext(StringReader.of("hello4 test"), null);
         assertEquals(2, result.size());
         assertEquals("hello4", result.getArgument("hello4"));
         assertNull(result.getArgument("int1"));
 
-        result = node.parseExecuteContext(new StringReader("hello5 123123"), null);
+        result = node.parseExecuteContext(StringReader.of("hello5 123123"), null);
         assertEquals(2, result.size());
         assertEquals("hello5", result.getArgument("hello5"));
         assertEquals(123123, result.<Integer>getArgument("int2"));
         assertEquals("当前输入的整形参数是: 123123", result.execute());
 
-        result = node.parseExecuteContext(new StringReader("allow separator literal world"), null);
+        result = node.parseExecuteContext(StringReader.of("allow separator literal world"), null);
         assertEquals(1, result.size());
         assertEquals("allow separator literal", result.getArgument("allow separator literal"));
 
-        result = node.parseExecuteContext(new StringReader("allow separator literal world2"), null);
+        result = node.parseExecuteContext(StringReader.of("allow separator literal world2"), null);
         assertEquals(2, result.size());
         assertEquals("allow separator literal", result.getArgument("allow separator literal"));
         assertEquals("world2", result.getArgument("world2"));
 
-        result = node.parseExecuteContext(new StringReader("hello6"), null);
+        result = node.parseExecuteContext(StringReader.of("hello6"), null);
         assertEquals(2, result.size());
         assertEquals("hello6", result.getArgument("hello6"));
         assertEquals(0, result.<Integer>getArgument("int3"));
 
-        result = node.parseExecuteContext(new StringReader("hello6 xxx"), null);
+        result = node.parseExecuteContext(StringReader.of("hello6 xxx"), null);
         assertEquals(2, result.size());
         assertEquals("hello6", result.getArgument("hello6"));
         assertFalse(result.isExecutable());
         assertFalse(result.isArgumentSuccess("int3"));
         assertNull(result.getArgument("int3"));
 
-        result = node.parseExecuteContext(new StringReader("hello6 123"), null);
+        result = node.parseExecuteContext(StringReader.of("hello6 123"), null);
         assertEquals(2, result.size());
         assertEquals("hello6", result.getArgument("hello6"));
         assertEquals(123, result.<Integer>getArgument("int3"));
@@ -138,51 +138,51 @@ public class NodeTest {
 
     @Test
     public void tab() {
-        var result = node.tab(new StringReader(""), null);
+        var result = node.tab(StringReader.of(""), null);
         assertEquals(node.getLiteralNodes().size(), result.size());
         assertEquals(new ArrayList<>(node.getLiteralNodes().keySet()), result);
 
-        result = node.tab(new StringReader("he"), null);
+        result = node.tab(StringReader.of("he"), null);
         assertEquals(node.getLiteralNodes().keySet().stream().filter(key -> key.startsWith("he")).count(), result.size());
         assertEquals(node.getLiteralNodes().keySet().stream().filter(key -> key.startsWith("he")).collect(Collectors.toList()), result);
 
-        result = node.tab(new StringReader("hello2"), null);
+        result = node.tab(StringReader.of("hello2"), null);
         assertEquals(node.getLiteralNodes().keySet().stream().filter(key -> key.startsWith("hello2")).count(), result.size());
         assertEquals(node.getLiteralNodes().keySet().stream().filter(key -> key.startsWith("hello2")).collect(Collectors.toList()), result);
 
-        result = node.tab(new StringReader("hello6"), null);
+        result = node.tab(StringReader.of("hello6"), null);
         assertEquals(node.getLiteralNodes().keySet().stream().filter(key -> key.startsWith("hello6")).count(), result.size());
         assertEquals(node.getLiteralNodes().keySet().stream().filter(key -> key.startsWith("hello6")).collect(Collectors.toList()), result);
 
-        result = node.tab(new StringReader("hello2 "), null);
+        result = node.tab(StringReader.of("hello2 "), null);
         assertEquals(1, result.size());
         assertEquals(Collections.singletonList("world1"), result);
 
-        result = node.tab(new StringReader("hello2 world"), null);
+        result = node.tab(StringReader.of("hello2 world"), null);
         assertEquals(1, result.size());
         assertEquals(Collections.singletonList("world1"), result);
 
-        result = node.tab(new StringReader("hello2 world1"), null);
+        result = node.tab(StringReader.of("hello2 world1"), null);
         assertEquals(1, result.size());
         assertEquals(Collections.singletonList("world1"), result);
 
-        result = node.tab(new StringReader("hello3 "), null);
+        result = node.tab(StringReader.of("hello3 "), null);
         assertEquals(params.size(), result.size());
         assertEquals(new ArrayList<>(params.keySet()), result);
 
-        result = node.tab(new StringReader("hello3 te"), null);
+        result = node.tab(StringReader.of("hello3 te"), null);
         assertEquals(params.keySet().stream().filter(key -> key.startsWith("te")).count(), result.size());
         assertEquals(params.keySet().stream().filter(key -> key.startsWith("te")).collect(Collectors.toList()), result);
 
-        result = node.tab(new StringReader("hello3 bo"), null);
+        result = node.tab(StringReader.of("hello3 bo"), null);
         assertEquals(params.keySet().stream().filter(key -> key.startsWith("bo")).count(), result.size());
         assertEquals(params.keySet().stream().filter(key -> key.startsWith("bo")).collect(Collectors.toList()), result);
 
-        result = node.tab(new StringReader("hello3 test3"), null);
+        result = node.tab(StringReader.of("hello3 test3"), null);
         assertEquals(params.keySet().stream().filter(key -> key.startsWith("test3")).count(), result.size());
         assertEquals(params.keySet().stream().filter(key -> key.startsWith("test3")).collect(Collectors.toList()), result);
 
-        result = node.tab(new StringReader("allow "), null);
+        result = node.tab(StringReader.of("allow "), null);
         assertEquals(node.getLiteralNodes().keySet().stream().filter(key -> key.startsWith("allow ")).count(), result.size());
         assertEquals(node.getLiteralNodes().keySet().stream().filter(key -> key.startsWith("allow ")).collect(Collectors.toList()), result);
     }

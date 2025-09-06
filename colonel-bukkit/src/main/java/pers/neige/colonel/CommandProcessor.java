@@ -68,7 +68,7 @@ public class CommandProcessor {
         val tabPermission = command.getName() + ".command.tab";
         command.setExecutor((sender, it, label, args) -> {
             val text = getCommandText(args).trim();
-            val context = root.parseExecuteContext(new StringReader(text, ' ', '\\'), sender);
+            val context = root.parseExecuteContext(StringReader.of(text, ' ', '\\'), sender);
             val permission = getPermission(command.getName().toLowerCase(), context);
             if (!sender.hasPermission(permission)) {
                 if (noPermissionExecutor != null) {
@@ -84,7 +84,7 @@ public class CommandProcessor {
                 return new ArrayList<>();
             }
             val text = getCommandText(args);
-            val context = root.parseTabContext(new StringReader(text, ' ', '\\'), sender);
+            val context = root.parseTabContext(StringReader.of(text, ' ', '\\'), sender);
             val permission = getPermission(command.getName().toLowerCase(), context);
             if (!sender.hasPermission(permission)) {
                 return new ArrayList<>();

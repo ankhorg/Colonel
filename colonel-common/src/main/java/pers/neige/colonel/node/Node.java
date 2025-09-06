@@ -241,14 +241,14 @@ public abstract class Node<S, R> {
      */
     private @Nullable ParsedNode<S, ?, R> matchLiteralNode(@NonNull StringReader input) {
         if (!input.canRead()) return null;
-        if (literalChars.contains(input.getSeparator()) && literalNodesSearcher != null) {
+        if (input.containsSeparator(literalChars) && literalNodesSearcher != null) {
             val textToParse = input.peek(literalNodesMaxLength).toLowerCase(Locale.ENGLISH);
             val emit = literalNodesSearcher.firstMatch(textToParse);
             if (emit == null) return null;
             val text = emit.getSearchString();
             if (!textToParse.startsWith(text)) return null;
             input.skip(text.length());
-            if (!input.canRead() || input.current() == input.getSeparator()) {
+            if (!input.canRead() || input.isSeparator(input.current())) {
                 val literal = emit.getPayload();
                 return literal == null ? null : new ParsedNode<>(literal, new ParseResult<>(text, true));
             } else {
@@ -369,7 +369,7 @@ public abstract class Node<S, R> {
                     if (!parseResult.isSuccess()) {
                         break;
                     }
-                    if (!input.canRead() || input.current() != input.getSeparator()) {
+                    if (!input.canRead() || !input.isSeparator(input.current())) {
                         input.setOffset(start);
                         break;
                     }
@@ -380,7 +380,7 @@ public abstract class Node<S, R> {
                     if (next == null) {
                         break;
                     }
-                    if (!input.canRead() || input.current() != input.getSeparator()) {
+                    if (!input.canRead() || !input.isSeparator(input.current())) {
                         input.setOffset(start);
                         break;
                     }

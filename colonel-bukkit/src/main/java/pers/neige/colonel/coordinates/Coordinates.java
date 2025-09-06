@@ -8,7 +8,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pers.neige.colonel.reader.StringReader;
 
@@ -51,7 +50,7 @@ public class Coordinates {
         return new Coordinates(x, y, z);
     }
 
-    public static @NotNull LocationType readLocationType(@NonNull StringReader reader) {
+    public static @NonNull LocationType readLocationType(@NonNull StringReader reader) {
         val current = reader.current();
         if (current == '~') {
             reader.skip();
@@ -69,7 +68,7 @@ public class Coordinates {
             return null;
         }
         LocationType type = readLocationType(reader);
-        if (!reader.canRead() || reader.current() == reader.getSeparator()) {
+        if (!reader.canRead() || reader.isSeparator(reader.current())) {
             return new Coordinate(type, 0);
         }
         Double value = reader.readDouble();
