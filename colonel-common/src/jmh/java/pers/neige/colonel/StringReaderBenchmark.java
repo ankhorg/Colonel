@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 public class StringReaderBenchmark {
     // @Benchmark
     public void readValidIntegerByReader() {
-        StringReader reader = new StringReader("12345");
+        StringReader reader = StringReader.of("12345");
         reader.readInteger();
     }
 
@@ -36,7 +36,7 @@ public class StringReaderBenchmark {
 
     // @Benchmark
     public void readValidHighIntegerByReader() {
-        StringReader reader = new StringReader("2147483646");
+        StringReader reader = StringReader.of("2147483646");
         reader.readInteger();
     }
 
@@ -47,7 +47,7 @@ public class StringReaderBenchmark {
 
     // @Benchmark
     public void readInvalidIntegerByReader() {
-        StringReader reader = new StringReader("hello");
+        StringReader reader = StringReader.of("hello");
         reader.readInteger();
     }
 
@@ -61,7 +61,7 @@ public class StringReaderBenchmark {
 
     // @Benchmark
     public void readValidDoubleByReader() {
-        StringReader reader = new StringReader("12345");
+        StringReader reader = StringReader.of("12345");
         reader.readDouble();
     }
 
@@ -72,7 +72,7 @@ public class StringReaderBenchmark {
 
     // @Benchmark
     public void readInvalidDoubleByReader() {
-        StringReader reader = new StringReader("hello");
+        StringReader reader = StringReader.of("hello");
         reader.readDouble();
     }
 

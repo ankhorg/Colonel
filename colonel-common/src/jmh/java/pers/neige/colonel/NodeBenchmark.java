@@ -85,61 +85,61 @@ public class NodeBenchmark {
 
     // @Benchmark
     public void parseA0() {
-        specialNode.parseExecuteContext(new StringReader("hello hello hello hello hello"), null);
+        specialNode.parseExecuteContext(StringReader.of("hello hello hello hello hello"), null);
     }
 
     // @Benchmark
     public void parseA1() {
-        normalNode.parseExecuteContext(new StringReader("hello hello hello hello hello"), null);
+        normalNode.parseExecuteContext(StringReader.of("hello hello hello hello hello"), null);
     }
 
     // @Benchmark
     public void parseB0() {
-        specialNode.parseExecuteContext(new StringReader("abcdefghijklmn abcdefghijklmn"), null);
+        specialNode.parseExecuteContext(StringReader.of("abcdefghijklmn abcdefghijklmn"), null);
     }
 
     // @Benchmark
     public void parseB1() {
-        normalNode.parseExecuteContext(new StringReader("abcdefghijklmn abcdefghijklmn"), null);
+        normalNode.parseExecuteContext(StringReader.of("abcdefghijklmn abcdefghijklmn"), null);
     }
 
     // @Benchmark
     public void parseSeparator0() {
-        specialNode.parseExecuteContext(new StringReader("allow separator literal world"), null);
+        specialNode.parseExecuteContext(StringReader.of("allow separator literal world"), null);
     }
 
     // @Benchmark
     public void parseSeparator1() {
-        normalNode.parseExecuteContext(new StringReader("allow-separator-literal world"), null);
+        normalNode.parseExecuteContext(StringReader.of("allow-separator-literal world"), null);
     }
 
     // @Benchmark
     public void parseBigA0() {
-        specialBigNode.parseExecuteContext(new StringReader("hello hello hello hello hello"), null);
+        specialBigNode.parseExecuteContext(StringReader.of("hello hello hello hello hello"), null);
     }
 
     // @Benchmark
     public void parseBigA1() {
-        normalBigNode.parseExecuteContext(new StringReader("hello hello hello hello hello"), null);
+        normalBigNode.parseExecuteContext(StringReader.of("hello hello hello hello hello"), null);
     }
 
     // @Benchmark
     public void parseBigB0() {
-        specialBigNode.parseExecuteContext(new StringReader("abcdefghijklmn abcdefghijklmn"), null);
+        specialBigNode.parseExecuteContext(StringReader.of("abcdefghijklmn abcdefghijklmn"), null);
     }
 
     // @Benchmark
     public void parseBigB1() {
-        normalBigNode.parseExecuteContext(new StringReader("abcdefghijklmn abcdefghijklmn"), null);
+        normalBigNode.parseExecuteContext(StringReader.of("abcdefghijklmn abcdefghijklmn"), null);
     }
 
     // @Benchmark
     public void parseBigSeparator0() {
-        specialBigNode.parseExecuteContext(new StringReader("allow separator literal world"), null);
+        specialBigNode.parseExecuteContext(StringReader.of("allow separator literal world"), null);
     }
 
     // @Benchmark
     public void parseBigSeparator1() {
-        normalBigNode.parseExecuteContext(new StringReader("allow-separator-literal world"), null);
+        normalBigNode.parseExecuteContext(StringReader.of("allow-separator-literal world"), null);
     }
 }

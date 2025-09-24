@@ -10,6 +10,7 @@ import pers.neige.colonel.reader.StringReader;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 /**
@@ -29,9 +30,14 @@ public class MapArgument<S, A, R> extends Argument<S, A, R> {
     /**
      * Map 获取器
      */
-    private final @NonNull Supplier<Map<String, A>> mapGetter;
+    private final @NonNull BiFunction<NodeChain<S, R>, S, Map<String, A>> mapGetter;
 
     public MapArgument(@NonNull Supplier<Map<String, A>> mapGetter) {
+        this.nonnull = true;
+        this.mapGetter = (nodeChain, source) -> mapGetter.get();
+    }
+
+    public MapArgument(@NonNull BiFunction<NodeChain<S, R>, S, Map<String, A>> mapGetter) {
         this.nonnull = true;
         this.mapGetter = mapGetter;
     }
@@ -41,7 +47,7 @@ public class MapArgument<S, A, R> extends Argument<S, A, R> {
         val start = input.getOffset();
         val key = input.readString();
         if (key.isEmpty()) return new ParseResult<>(null, false);
-        val value = mapGetter.get().get(key);
+        val value = mapGetter.apply(nodeChain, source).get(key);
         if (value == null && nonnull) {
             input.setOffset(start);
             return new ParseResult<>(null, false);
@@ -51,6 +57,6 @@ public class MapArgument<S, A, R> extends Argument<S, A, R> {
 
     @Override
     protected @NonNull Collection<String> rawTab(@NonNull Context<S, R> context, @NonNull String remaining) {
-        return mapGetter.get().keySet();
+        return mapGetter.apply(context.getNodeChain(), context.getSource()).keySet();
     }
 }
