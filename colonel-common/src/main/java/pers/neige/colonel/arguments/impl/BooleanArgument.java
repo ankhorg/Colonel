@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import pers.neige.colonel.arguments.Argument;
 import pers.neige.colonel.arguments.ParseResult;
 import pers.neige.colonel.context.Context;
+import pers.neige.colonel.context.NodeChain;
 import pers.neige.colonel.reader.StringReader;
 
 import java.util.Arrays;
@@ -24,7 +25,7 @@ public class BooleanArgument<S, R> extends Argument<S, Boolean, R> {
     private final static List<String> SUGGESTIONS = Arrays.asList("true", "false");
 
     @Override
-    public @NonNull ParseResult<Boolean> parse(@NonNull StringReader input, @Nullable S source) {
+    public @NonNull ParseResult<Boolean> parse(@NonNull NodeChain<S, R> nodeChain, @NonNull StringReader input, @Nullable S source) {
         val result = input.readBoolean();
         if (result == null) {
             return new ParseResult<>(null, false);

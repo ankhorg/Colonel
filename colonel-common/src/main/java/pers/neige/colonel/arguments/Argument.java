@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.val;
 import org.jetbrains.annotations.Nullable;
 import pers.neige.colonel.context.Context;
+import pers.neige.colonel.context.NodeChain;
 import pers.neige.colonel.reader.StringReader;
 
 import java.util.Collection;
@@ -102,10 +103,11 @@ public abstract class Argument<S, A, R> {
     /**
      * 参数解析方法，解析失败时 ParseResult#success 应为 false, 且 StringReader#offset 应保持读取前状态
      *
-     * @param input  输入的文本
-     * @param source 执行源
+     * @param nodeChain 此前已解析的节点链
+     * @param input     输入的文本
+     * @param source    执行源
      */
-    public abstract @NonNull ParseResult<A> parse(@NonNull StringReader input, @Nullable S source);
+    public abstract @NonNull ParseResult<A> parse(@NonNull NodeChain<S, R> nodeChain, @NonNull StringReader input, @Nullable S source);
 
     /**
      * 根据剩余文本进行参数补全

@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import pers.neige.colonel.arguments.Argument;
 import pers.neige.colonel.arguments.ParseResult;
 import pers.neige.colonel.context.Context;
+import pers.neige.colonel.context.NodeChain;
 import pers.neige.colonel.reader.StringReader;
 
 import java.util.*;
@@ -63,7 +64,7 @@ public class EnumArgument<S, A extends Enum<A>, R> extends Argument<S, A, R> {
     }
 
     @Override
-    public @NonNull ParseResult<A> parse(@NonNull StringReader input, @Nullable S source) {
+    public @NonNull ParseResult<A> parse(@NonNull NodeChain<S, R> nodeChain, @NonNull StringReader input, @Nullable S source) {
         val start = input.getOffset();
         val key = this.ignoreCase ? input.readString().toUpperCase(Locale.ROOT) : input.readString();
         if (key.isEmpty()) return new ParseResult<>(null, false);

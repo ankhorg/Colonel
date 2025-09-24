@@ -16,12 +16,12 @@ repositories {
 }
 
 dependencies {
-    implementation("pers.neige.colonel:colonel-common:[latest release version]")
-//  implementation("pers.neige.colonel:colonel-common:[latest release version]") {
+    implementation("pers.neige.colonel:colonel-common:+")
+//  implementation("pers.neige.colonel:colonel-common:+") {
 //    exclude(group = "org.neosearch.stringsearcher")
 //  }
-    implementation("pers.neige.colonel:colonel-kotlin:[latest release version]")
-    implementation("pers.neige.colonel:colonel-bukkit:[latest release version]")
+    implementation("pers.neige.colonel:colonel-kotlin:+")
+    implementation("pers.neige.colonel:colonel-bukkit:+")
 }
 ```
 
@@ -181,7 +181,7 @@ public class Example1Test {
 
         @Override
         @NonNull
-        public ParseResult<ExceptionType> parse(@NonNull StringReader input, @Nullable S source) {
+        public ParseResult<ExceptionType> parse(@NonNull NodeChain<S, R> nodeChain, @NonNull StringReader input, @Nullable S source) {
             // 获取当前的字符读取偏移
             val start = input.getOffset();
             // 尝试读取一段文本(此时偏移已经移动到这段文本后)
@@ -263,7 +263,7 @@ public class Example1Test {
 
 @Override
 @NonNull
-public ParseResult<ExceptionType> parse(@NonNull StringReader input, @Nullable S source) {
+public ParseResult<ExceptionType> parse(@NonNull NodeChain<S, R> nodeChain, @NonNull StringReader input, @Nullable S source) {
     // 获取当前的字符读取偏移
     val start = input.getOffset();
     // 尝试读取一段文本(此时偏移已经移动到这段文本后)

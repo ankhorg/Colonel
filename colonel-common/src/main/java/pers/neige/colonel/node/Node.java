@@ -55,6 +55,11 @@ public abstract class Node<S, R> {
      */
     protected final @NonNull Set<Character> literalChars = new HashSet<>();
     /**
+     * 父节点
+     */
+    @Getter
+    protected @Nullable Node<S, R> parentNode = null;
+    /**
      * LiteralNode 识别名搜索器，仅在识别名中包含传入的 StringReader 分隔符时启用
      */
     protected @Nullable StringSearcher<LiteralNode<S, R>> literalNodesSearcher = null;
@@ -107,48 +112,49 @@ public abstract class Node<S, R> {
     }
 
     /**
-     * 在父节点后接续其他节点<br>
+     * 在父节点后接续其他子节点<br>
      * 同一个 Node 后只能跟随多个 LiteralNode 或 一个 ArgumentNode，不可混合构建
      *
-     * @param parent 接续的 Node
-     * @param node   接续的 Node
-     * @return {@code this}
+     * @param parentNode 父节点
+     * @param childNode  子节点
+     * @return {@code parentNode}
      */
-    public static <N extends Node<S, R>, S, R> @NonNull N then(@NonNull N parent, @NonNull Node<S, R> node) {
-        return Node.then(parent, node, true);
+    public static <N extends Node<S, R>, S, R> @NonNull N then(@NonNull N parentNode, @NonNull Node<S, R> childNode) {
+        return Node.then(parentNode, childNode, true);
     }
 
     /**
-     * 在父节点后接续其他节点<br>
+     * 在父节点后接续其他子节点<br>
      * 同一个 Node 后只能跟随多个 LiteralNode 或 一个 ArgumentNode，不可混合构建
      *
-     * @param parent 接续的 Node
-     * @param node   接续的 Node
-     * @param build  对于 LiteralNode, 是否立即构建字符搜索器
-     * @return {@code this}
+     * @param parentNode 父节点
+     * @param childNode  子节点
+     * @param build      对于 LiteralNode，是否立即构建字符搜索器
+     * @return {@code parentNode}
      */
-    public static <N extends Node<S, R>, S, R> @NonNull N then(@NonNull N parent, @NonNull Node<S, R> node, boolean build) {
-        if (node instanceof LiteralNode) {
-            if (parent.argumentNode != null) {
+    public static <N extends Node<S, R>, S, R> @NonNull N then(@NonNull N parentNode, @NonNull Node<S, R> childNode, boolean build) {
+        if (childNode instanceof LiteralNode) {
+            if (parentNode.argumentNode != null) {
                 throw new InvalidParameterException("Node 后只能跟随多个 LiteralNode 或 一个 ArgumentNode");
             }
-            for (String name : node.getNames()) {
-                parent.literalNodes.put(name, (LiteralNode<S, R>) node);
-                parent.literalNodesSet.add((LiteralNode<S, R>) node);
-                parent.literalNodesMaxLength = Math.max(parent.literalNodesMaxLength, name.length());
-                name.chars().forEach(c -> parent.literalChars.add((char) c));
+            for (String name : childNode.getNames()) {
+                parentNode.literalNodes.put(name, (LiteralNode<S, R>) childNode);
+                parentNode.literalNodesSet.add((LiteralNode<S, R>) childNode);
+                parentNode.literalNodesMaxLength = Math.max(parentNode.literalNodesMaxLength, name.length());
+                name.chars().forEach(c -> parentNode.literalChars.add((char) c));
             }
-            if (build) parent.buildLiteralSearcher();
-        } else if (node instanceof ArgumentNode) {
-            if (!parent.literalNodes.isEmpty()) {
+            if (build) parentNode.buildLiteralSearcher();
+        } else if (childNode instanceof ArgumentNode) {
+            if (!parentNode.literalNodes.isEmpty()) {
                 throw new InvalidParameterException("Node 后只能跟随多个 LiteralNode 或 一个 ArgumentNode");
             }
-            parent.argumentNode = (ArgumentNode<S, ?, R>) node;
+            parentNode.argumentNode = (ArgumentNode<S, ?, R>) childNode;
         } else {
             throw new InvalidParameterException("Node 后只能跟随多个 LiteralNode 或 一个 ArgumentNode");
         }
-        parent.childNodes.put(node.getId(), node);
-        return parent;
+        parentNode.childNodes.put(childNode.getId(), childNode);
+        childNode.parentNode = parentNode;
+        return parentNode;
     }
 
     /**
@@ -188,26 +194,26 @@ public abstract class Node<S, R> {
     }
 
     /**
-     * 在当前节点后接续其他节点<br>
+     * 在当前节点后接续其他子节点<br>
      * 同一个 Node 后只能跟随多个 LiteralNode 或 一个 ArgumentNode，不可混合构建
      *
-     * @param node 接续的 Node
+     * @param childNode 子节点
      * @return {@code this}
      */
-    public Node<S, R> then(@NonNull Node<S, R> node) {
-        return Node.then(this, node, true);
+    public Node<S, R> then(@NonNull Node<S, R> childNode) {
+        return Node.then(this, childNode, true);
     }
 
     /**
-     * 在当前节点后接续其他节点<br>
+     * 在当前节点后接续其他子节点<br>
      * 同一个 Node 后只能跟随多个 LiteralNode 或 一个 ArgumentNode，不可混合构建
      *
-     * @param node  接续的 Node
-     * @param build 对于 LiteralNode, 是否立即构建字符搜索器
+     * @param childNode 子节点
+     * @param build     对于 LiteralNode, 是否立即构建字符搜索器
      * @return {@code this}
      */
-    public @NonNull Node<S, R> then(@NonNull Node<S, R> node, boolean build) {
-        return Node.then(this, node, build);
+    public @NonNull Node<S, R> then(@NonNull Node<S, R> childNode, boolean build) {
+        return Node.then(this, childNode, build);
     }
 
     /**
@@ -273,7 +279,7 @@ public abstract class Node<S, R> {
      * @param input 输入的文本读取器
      * @return 下一个节点
      */
-    private @Nullable ParsedNode<S, ?, R> getParsedNextNode(@NonNull StringReader input, @Nullable S source) {
+    private @Nullable ParsedNode<S, ?, R> getParsedNextNode(@NonNull NodeChain<S, R> nodeChain, @NonNull StringReader input, @Nullable S source) {
         if (argumentNode != null) {
             if (!input.canRead()) {
                 if (argumentNode.getArgument().hasDefaultValue()) {
@@ -282,7 +288,7 @@ public abstract class Node<S, R> {
                     return null;
                 }
             } else {
-                return new ParsedNode<>(argumentNode, argumentNode.getArgument().parse(input, source));
+                return new ParsedNode<>(argumentNode, argumentNode.getArgument().parse(nodeChain, input, source));
             }
         } else {
             return matchLiteralNode(input);
@@ -301,7 +307,7 @@ public abstract class Node<S, R> {
         Node<S, R> current = this;
         input.skipSeparator();
         while (true) {
-            val next = current.getParsedNextNode(input, source);
+            val next = current.getParsedNextNode(nodeChain, input, source);
             if (next == null) {
                 break;
             }
@@ -365,7 +371,7 @@ public abstract class Node<S, R> {
                 }
                 val start = input.getOffset();
                 if (current.argumentNode != null) {
-                    val parseResult = current.argumentNode.getArgument().parse(input, source);
+                    val parseResult = current.argumentNode.getArgument().parse(nodeChain, input, source);
                     if (!parseResult.isSuccess()) {
                         break;
                     }

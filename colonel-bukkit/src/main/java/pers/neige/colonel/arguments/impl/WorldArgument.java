@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import pers.neige.colonel.arguments.Argument;
 import pers.neige.colonel.arguments.ParseResult;
 import pers.neige.colonel.context.Context;
+import pers.neige.colonel.context.NodeChain;
 import pers.neige.colonel.reader.StringReader;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class WorldArgument<S, R> extends Argument<S, World, R> {
     @Override
-    public @NonNull ParseResult<World> parse(@NonNull StringReader input, @Nullable S source) {
+    public @NonNull ParseResult<World> parse(@NonNull NodeChain<S, R> nodeChain, @NonNull StringReader input, @Nullable S source) {
         val start = input.getOffset();
         val name = input.readString();
         var world = Bukkit.getWorld(name);

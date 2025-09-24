@@ -8,6 +8,7 @@ import pers.neige.colonel.arguments.Argument
 import pers.neige.colonel.arguments.ParseResult
 import pers.neige.colonel.arguments.impl.StringArgument
 import pers.neige.colonel.context.Context
+import pers.neige.colonel.context.NodeChain
 import pers.neige.colonel.node.Node
 import pers.neige.colonel.reader.StringReader
 import java.security.InvalidParameterException
@@ -129,7 +130,7 @@ class Example1Test {
     }
 
     class ExceptionTypeArgument<S, R> : Argument<S?, ExceptionType?, R?>() {
-        override fun parse(input: StringReader, source: S?): ParseResult<ExceptionType?> {
+        override fun parse(nodeChain: NodeChain<S?, R?>, input: StringReader, source: S?): ParseResult<ExceptionType?> {
             // 获取当前的字符读取偏移
             val start = input.offset
             // 尝试读取一段文本(此时偏移已经移动到这段文本后)

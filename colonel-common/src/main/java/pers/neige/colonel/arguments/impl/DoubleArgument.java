@@ -4,6 +4,7 @@ import lombok.*;
 import org.jetbrains.annotations.Nullable;
 import pers.neige.colonel.arguments.Argument;
 import pers.neige.colonel.arguments.ParseResult;
+import pers.neige.colonel.context.NodeChain;
 import pers.neige.colonel.reader.StringReader;
 
 /**
@@ -29,7 +30,7 @@ public class DoubleArgument<S, R> extends Argument<S, Double, R> {
     private final double maximum = Double.MAX_VALUE;
 
     @Override
-    public @NonNull ParseResult<Double> parse(@NonNull StringReader input, @Nullable S source) {
+    public @NonNull ParseResult<Double> parse(@NonNull NodeChain<S, R> nodeChain, @NonNull StringReader input, @Nullable S source) {
         val result = input.readDouble();
         if (result == null) {
             return new ParseResult<>(null, false);
