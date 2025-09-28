@@ -79,9 +79,7 @@ public class Context<S, R> {
      * @return 对应ID的节点是否解析成功
      */
     public boolean isArgumentSuccess(@NonNull String key) {
-        val node = get(key);
-        if (node == null) return false;
-        return node.getArgument().isSuccess();
+        return nodeChain.isArgumentSuccess(key);
     }
 
     /**
@@ -90,10 +88,8 @@ public class Context<S, R> {
      * @param key 节点ID
      * @return 对应ID的节点解析后参数
      */
-    @SuppressWarnings("unchecked")
     public <A> A getArgument(@NonNull String key) {
-        val value = getRawArgument(key);
-        return (A) value;
+        return nodeChain.getArgument(key);
     }
 
     /**
@@ -104,20 +100,7 @@ public class Context<S, R> {
      * @return 对应ID的节点解析后参数
      */
     public <A> A getArgument(@NonNull String key, Class<A> clazz) {
-        val value = getRawArgument(key);
-        return clazz.isInstance(value) ? clazz.cast(value) : null;
-    }
-
-    /**
-     * 对应ID的节点解析后参数
-     *
-     * @param key 节点ID
-     * @return 对应ID的节点解析后参数
-     */
-    private Object getRawArgument(@NonNull String key) {
-        val node = get(key);
-        if (node == null) return null;
-        return node.getArgument().getResult();
+        return nodeChain.getArgument(key, clazz);
     }
 
     /**
@@ -125,10 +108,8 @@ public class Context<S, R> {
      *
      * @return 最后一个节点解析后参数
      */
-    @SuppressWarnings("unchecked")
     public <A> A getLastArgument() {
-        val value = getRawLastArgument();
-        return (A) value;
+        return nodeChain.getLastArgument();
     }
 
     /**
@@ -138,19 +119,7 @@ public class Context<S, R> {
      * @return 最后一个节点解析后参数
      */
     public <A> A getLastArgument(Class<A> clazz) {
-        val value = getRawLastArgument();
-        return clazz.isInstance(value) ? clazz.cast(value) : null;
-    }
-
-    /**
-     * 最后一个节点解析后参数
-     *
-     * @return 最后一个节点解析后参数
-     */
-    private Object getRawLastArgument() {
-        val node = nodeChain.last();
-        if (node == null) return null;
-        return node.getArgument().getResult();
+        return nodeChain.getLastArgument(clazz);
     }
 
     /**

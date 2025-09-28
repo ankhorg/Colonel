@@ -2,6 +2,7 @@ package pers.neige.colonel.context;
 
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.val;
 import org.jetbrains.annotations.Nullable;
 import pers.neige.colonel.node.ParsedNode;
 
@@ -79,5 +80,86 @@ public class NodeChain<S, R> {
      */
     public boolean isEmpty() {
         return nodes.isEmpty();
+    }
+
+    /**
+     * 对应ID的节点是否解析成功
+     *
+     * @param key 节点ID
+     * @return 对应ID的节点是否解析成功
+     */
+    public boolean isArgumentSuccess(@NonNull String key) {
+        val node = get(key);
+        if (node == null) return false;
+        return node.getArgument().isSuccess();
+    }
+
+    /**
+     * 对应ID的节点解析后参数
+     *
+     * @param key 节点ID
+     * @return 对应ID的节点解析后参数
+     */
+    @SuppressWarnings("unchecked")
+    public <A> A getArgument(@NonNull String key) {
+        val value = getRawArgument(key);
+        return (A) value;
+    }
+
+    /**
+     * 对应ID的节点解析后参数
+     *
+     * @param key   节点ID
+     * @param clazz 参数类型
+     * @return 对应ID的节点解析后参数
+     */
+    public <A> A getArgument(@NonNull String key, Class<A> clazz) {
+        val value = getRawArgument(key);
+        return clazz.isInstance(value) ? clazz.cast(value) : null;
+    }
+
+    /**
+     * 对应ID的节点解析后参数
+     *
+     * @param key 节点ID
+     * @return 对应ID的节点解析后参数
+     */
+    private Object getRawArgument(@NonNull String key) {
+        val node = get(key);
+        if (node == null) return null;
+        return node.getArgument().getResult();
+    }
+
+    /**
+     * 最后一个节点解析后参数
+     *
+     * @return 最后一个节点解析后参数
+     */
+    @SuppressWarnings("unchecked")
+    public <A> A getLastArgument() {
+        val value = getRawLastArgument();
+        return (A) value;
+    }
+
+    /**
+     * 最后一个节点解析后参数
+     *
+     * @param clazz 参数类型
+     * @return 最后一个节点解析后参数
+     */
+    public <A> A getLastArgument(Class<A> clazz) {
+        val value = getRawLastArgument();
+        return clazz.isInstance(value) ? clazz.cast(value) : null;
+    }
+
+    /**
+     * 最后一个节点解析后参数
+     *
+     * @return 最后一个节点解析后参数
+     */
+    private Object getRawLastArgument() {
+        val node = last();
+        if (node == null) return null;
+        return node.getArgument().getResult();
     }
 }
