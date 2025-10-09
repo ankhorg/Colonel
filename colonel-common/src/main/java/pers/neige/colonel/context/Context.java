@@ -189,7 +189,7 @@ public class Context<S, R> {
             return lastNode.getArgumentNode().getArgument().tab(this, remaining);
         }
         Collection<String> rawSuggestions = new ArrayList<>();
-        for (LiteralNode<S, R> node : lastNode.getLiteralNodesSet()) {
+        for (LiteralNode<S, ?, R> node : lastNode.getLiteralNodesSet()) {
             rawSuggestions.addAll(node.getTabNames());
         }
         val lowerCaseRemaining = remaining.toLowerCase();

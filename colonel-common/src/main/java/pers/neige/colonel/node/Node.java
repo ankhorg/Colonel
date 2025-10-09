@@ -30,11 +30,11 @@ public abstract class Node<S, R> {
     /**
      * 所有 LiteralNode 类型子节点
      */
-    protected final @NonNull Map<String, LiteralNode<S, R>> literalNodes = new LinkedHashMap<>();
+    protected final @NonNull Map<String, LiteralNode<S, ?, R>> literalNodes = new LinkedHashMap<>();
     /**
      * 所有 LiteralNode 类型子节点
      */
-    protected final @NonNull Set<LiteralNode<S, R>> literalNodesSet = new LinkedHashSet<>();
+    protected final @NonNull Set<LiteralNode<S, ?, R>> literalNodesSet = new LinkedHashSet<>();
     /**
      * 标识符
      */
@@ -62,7 +62,7 @@ public abstract class Node<S, R> {
     /**
      * LiteralNode 识别名搜索器，仅在识别名中包含传入的 StringReader 分隔符时启用
      */
-    protected @Nullable StringSearcher<LiteralNode<S, R>> literalNodesSearcher = null;
+    protected @Nullable StringSearcher<LiteralNode<S, ?, R>> literalNodesSearcher = null;
     /**
      * LiteralNode 类型子节点的最大长度
      */
@@ -138,8 +138,8 @@ public abstract class Node<S, R> {
                 throw new InvalidParameterException("Node 后只能跟随多个 LiteralNode 或 一个 ArgumentNode");
             }
             for (String name : childNode.getNames()) {
-                parentNode.literalNodes.put(name, (LiteralNode<S, R>) childNode);
-                parentNode.literalNodesSet.add((LiteralNode<S, R>) childNode);
+                parentNode.literalNodes.put(name, (LiteralNode<S, ?, R>) childNode);
+                parentNode.literalNodesSet.add((LiteralNode<S, ?, R>) childNode);
                 parentNode.literalNodesMaxLength = Math.max(parentNode.literalNodesMaxLength, name.length());
                 name.chars().forEach(c -> parentNode.literalChars.add((char) c));
             }
@@ -167,14 +167,14 @@ public abstract class Node<S, R> {
     /**
      * 所有 LiteralNode 类型子节点
      */
-    public @NonNull Map<String, LiteralNode<S, R>> getLiteralNodes() {
+    public @NonNull Map<String, LiteralNode<S, ?, R>> getLiteralNodes() {
         return Collections.unmodifiableMap(literalNodes);
     }
 
     /**
      * 所有 LiteralNode 类型子节点
      */
-    public @NonNull Set<LiteralNode<S, R>> getLiteralNodesSet() {
+    public @NonNull Set<LiteralNode<S, ?, R>> getLiteralNodesSet() {
         return Collections.unmodifiableSet(literalNodesSet);
     }
 
@@ -220,7 +220,7 @@ public abstract class Node<S, R> {
      * 构建字符搜索器
      */
     public void buildLiteralSearcher() {
-        val builder = StringSearcher.<LiteralNode<S, R>>builderWithPayload().ignoreOverlaps();
+        val builder = StringSearcher.<LiteralNode<S, ?, R>>builderWithPayload().ignoreOverlaps();
         literalNodes.forEach(builder::addSearchString);
         literalNodesSearcher = builder.build();
     }
@@ -247,7 +247,7 @@ public abstract class Node<S, R> {
      */
     private @Nullable ParsedNode<S, ?, R> matchLiteralNode(@NonNull StringReader input) {
         if (!input.canRead()) return null;
-        if (input.containsSeparator(literalChars) && literalNodesSearcher != null) {
+        if (literalNodesSearcher != null && input.containsSeparator(literalChars)) {
             val textToParse = input.peek(literalNodesMaxLength).toLowerCase(Locale.ENGLISH);
             val emit = literalNodesSearcher.firstMatch(textToParse);
             if (emit == null) return null;
@@ -256,7 +256,7 @@ public abstract class Node<S, R> {
             input.skip(text.length());
             if (!input.canRead() || input.isSeparator(input.current())) {
                 val literal = emit.getPayload();
-                return literal == null ? null : new ParsedNode<>(literal, new ParseResult<>(text, true));
+                return literal == null ? null : new ParsedNode<>(literal, new ParseResult<>(literal.getKeyToPayload().get(text), true));
             } else {
                 input.skip(-text.length());
                 return null;
@@ -269,7 +269,7 @@ public abstract class Node<S, R> {
                 input.setOffset(start);
                 return null;
             }
-            return new ParsedNode<>(literal, new ParseResult<>(text, true));
+            return new ParsedNode<>(literal, new ParseResult<>(literal.getKeyToPayload().get(text), true));
         }
     }
 

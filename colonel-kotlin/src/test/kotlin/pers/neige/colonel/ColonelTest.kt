@@ -37,6 +37,7 @@ class ColonelTest {
             literal("hello6") {
                 argument("int", IntegerArgument<String, String>().setDefaultValue(0))
             }
+            literal("hello7", hashMapOf("hello7" to 1, "hello8" to 2))
         }
 
         var result: Context<String, String> = node.parseExecuteContext(
@@ -116,5 +117,13 @@ class ColonelTest {
         Assertions.assertEquals(2, result.size())
         Assertions.assertEquals("hello6", result.getArgument("hello6"))
         Assertions.assertEquals(123, result.getArgument("int"))
+
+        result = node.parseExecuteContext(StringReader.of("hello7"), "source")
+        Assertions.assertEquals(1, result.size())
+        Assertions.assertEquals(1, result.getArgument("hello7"))
+
+        result = node.parseExecuteContext(StringReader.of("hello8"), "source")
+        Assertions.assertEquals(1, result.size())
+        Assertions.assertEquals(2, result.getArgument("hello7"))
     }
 }

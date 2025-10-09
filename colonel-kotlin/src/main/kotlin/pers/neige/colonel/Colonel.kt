@@ -18,8 +18,8 @@ fun <S, R> root(
 fun <S, R> literal(
     id: String,
     names: Collection<String?> = setOf(id),
-    nodeConfigurer: (LiteralNode<S, R>.() -> Unit)? = null
-): LiteralNode<S, R> {
+    nodeConfigurer: (LiteralNode<S, String, R>.() -> Unit)? = null
+): LiteralNode<S, String, R> {
     val node = LiteralNode.literal<S, R>(id, names)
     nodeConfigurer?.invoke(node)
     return node
@@ -29,9 +29,30 @@ fun <N : Node<S, R>, S, R> N.literal(
     id: String,
     names: Collection<String?> = setOf(id),
     build: Boolean = true,
-    nodeConfigurer: (LiteralNode<S, R>.() -> Unit)? = null
+    nodeConfigurer: (LiteralNode<S, String, R>.() -> Unit)? = null
 ): N {
     val node = LiteralNode.literal<S, R>(id, names)
+    nodeConfigurer?.invoke(node)
+    return Node.then(this, node, build)
+}
+
+fun <S, A, R> literal(
+    id: String,
+    keyToPayload: Map<String, A>,
+    nodeConfigurer: (LiteralNode<S, A, R>.() -> Unit)? = null
+): LiteralNode<S, A, R> {
+    val node = LiteralNode.literal<S, A, R>(id, keyToPayload)
+    nodeConfigurer?.invoke(node)
+    return node
+}
+
+fun <N : Node<S, R>, S, A, R> N.literal(
+    id: String,
+    keyToPayload: Map<String, A>,
+    build: Boolean = true,
+    nodeConfigurer: (LiteralNode<S, A, R>.() -> Unit)? = null
+): N {
+    val node = LiteralNode.literal<S, A, R>(id, keyToPayload)
     nodeConfigurer?.invoke(node)
     return Node.then(this, node, build)
 }

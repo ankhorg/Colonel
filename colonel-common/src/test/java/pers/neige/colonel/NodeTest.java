@@ -1,5 +1,6 @@
 package pers.neige.colonel;
 
+import lombok.val;
 import lombok.var;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -20,24 +21,29 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeTest {
-    private static Map<String, Integer> params;
+    private static Map<String, Integer> params0;
+    private static Map<String, Integer> params1;
     private static Node<Void, String> node;
 
     @BeforeAll
     public static void setup() {
-        params = new HashMap<>();
-        params.put("test1", 1);
-        params.put("test2", 2);
-        params.put("test3", 3);
-        params.put("test3test", 3);
-        params.put("boom", 3);
+        params0 = new HashMap<>();
+        params0.put("test1", 1);
+        params0.put("test2", 2);
+        params0.put("test3", 3);
+        params0.put("test3test", 3);
+        params0.put("boom", 3);
+
+        params1 = new HashMap<>();
+        params1.put("hello7", 1);
+        params1.put("hello8", 2);
 
         node = new RootNode<Void, String>("root")
                 .setExecutor((context) -> "啥也妹有")
                 .then(LiteralNode.literal("hello1"))
                 .then(LiteralNode.<Void, String>literal("hello2").then(LiteralNode.literal("world1")))
                 .then(LiteralNode.<Void, String>literal("hello3").then(
-                        ArgumentNode.argument("map1", new MapArgument<>(() -> params))
+                        ArgumentNode.argument("map1", new MapArgument<>(() -> params0))
                 ))
                 .then(LiteralNode.<Void, String>literal("hello4").then(
                         ArgumentNode.argument("int1", new IntegerArgument<>())
@@ -52,8 +58,31 @@ public class NodeTest {
                 .then(LiteralNode.<Void, String>literal("hello6").then(
                         ArgumentNode.argument("int3", new IntegerArgument<Void, String>().setDefaultValue(0))
                 ))
-                .then(LiteralNode.literal("hello6hello"));
+                .then(LiteralNode.literal("hello6hello"))
+                .then(LiteralNode.literal("hello7", params1))
+                .then(LiteralNode.literal("HELLO9"));
 
+    }
+
+    @Test
+    public void init() {
+        assertThrows(NullPointerException.class, () -> {
+            val map = new HashMap<String, String>();
+            map.put(null, "test");
+            new RootNode<Void, String>("root").then(LiteralNode.literal("test", map));
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            val map = new HashMap<String, String>();
+            map.put("test", null);
+            new RootNode<Void, String>("root").then(LiteralNode.literal("test", map));
+        });
+
+        assertThrows(NullPointerException.class, () -> {
+            val map = new HashMap<String, String>();
+            map.put(null, null);
+            new RootNode<Void, String>("root").then(LiteralNode.literal("test", map));
+        });
     }
 
     @Test
@@ -134,6 +163,26 @@ public class NodeTest {
         assertEquals(2, result.size());
         assertEquals("hello6", result.getArgument("hello6"));
         assertEquals(123, result.<Integer>getArgument("int3"));
+
+        result = node.parseExecuteContext(StringReader.of("hello7"), null);
+        assertEquals(1, result.size());
+        assertEquals(1, result.<Integer>getArgument("hello7"));
+
+        result = node.parseExecuteContext(StringReader.of("hello8"), null);
+        assertEquals(1, result.size());
+        assertEquals(2, result.<Integer>getArgument("hello7"));
+
+        result = node.parseExecuteContext(StringReader.of("HellO9"), null);
+        assertEquals(1, result.size());
+        assertEquals("HELLO9", result.getArgument("HELLO9"));
+
+        result = node.parseExecuteContext(StringReader.of("hello9"), null);
+        assertEquals(1, result.size());
+        assertEquals("HELLO9", result.getArgument("HELLO9"));
+
+        result = node.parseExecuteContext(StringReader.of("HELLO9"), null);
+        assertEquals(1, result.size());
+        assertEquals("HELLO9", result.getArgument("HELLO9"));
     }
 
     @Test
@@ -167,20 +216,20 @@ public class NodeTest {
         assertEquals(Collections.singletonList("world1"), result);
 
         result = node.tab(StringReader.of("hello3 "), null);
-        assertEquals(params.size(), result.size());
-        assertEquals(new ArrayList<>(params.keySet()), result);
+        assertEquals(params0.size(), result.size());
+        assertEquals(new ArrayList<>(params0.keySet()), result);
 
         result = node.tab(StringReader.of("hello3 te"), null);
-        assertEquals(params.keySet().stream().filter(key -> key.startsWith("te")).count(), result.size());
-        assertEquals(params.keySet().stream().filter(key -> key.startsWith("te")).collect(Collectors.toList()), result);
+        assertEquals(params0.keySet().stream().filter(key -> key.startsWith("te")).count(), result.size());
+        assertEquals(params0.keySet().stream().filter(key -> key.startsWith("te")).collect(Collectors.toList()), result);
 
         result = node.tab(StringReader.of("hello3 bo"), null);
-        assertEquals(params.keySet().stream().filter(key -> key.startsWith("bo")).count(), result.size());
-        assertEquals(params.keySet().stream().filter(key -> key.startsWith("bo")).collect(Collectors.toList()), result);
+        assertEquals(params0.keySet().stream().filter(key -> key.startsWith("bo")).count(), result.size());
+        assertEquals(params0.keySet().stream().filter(key -> key.startsWith("bo")).collect(Collectors.toList()), result);
 
         result = node.tab(StringReader.of("hello3 test3"), null);
-        assertEquals(params.keySet().stream().filter(key -> key.startsWith("test3")).count(), result.size());
-        assertEquals(params.keySet().stream().filter(key -> key.startsWith("test3")).collect(Collectors.toList()), result);
+        assertEquals(params0.keySet().stream().filter(key -> key.startsWith("test3")).count(), result.size());
+        assertEquals(params0.keySet().stream().filter(key -> key.startsWith("test3")).collect(Collectors.toList()), result);
 
         result = node.tab(StringReader.of("allow "), null);
         assertEquals(node.getLiteralNodes().keySet().stream().filter(key -> key.startsWith("allow ")).count(), result.size());
