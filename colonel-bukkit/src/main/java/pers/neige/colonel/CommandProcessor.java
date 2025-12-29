@@ -28,7 +28,7 @@ public class CommandProcessor {
         for (ParsedNode<CommandSender, ?, ?> parsedNode : context.getNodeChain().getNodes()) {
             if (parsedNode.getNode() instanceof LiteralNode) {
                 permission.append(".");
-                permission.append(parsedNode.getArgument().getResult());
+                permission.append(parsedNode.getNode().getId());
             }
         }
         return permission.toString();

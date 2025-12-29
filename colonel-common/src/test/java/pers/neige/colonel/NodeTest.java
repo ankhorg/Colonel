@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class NodeTest {
     private static Map<String, Integer> params0;
-    private static Map<String, Integer> params1;
     private static Node<Void, String> node;
 
     @BeforeAll
@@ -34,9 +33,9 @@ public class NodeTest {
         params0.put("test3test", 3);
         params0.put("boom", 3);
 
-        params1 = new HashMap<>();
+        Map<String, Integer> params1 = new HashMap<>();
         params1.put("hello7", 1);
-        params1.put("hello8", 2);
+        params1.put("hellO8", 2);
 
         node = new RootNode<Void, String>("root")
                 .setExecutor((context) -> "啥也妹有")
@@ -168,7 +167,19 @@ public class NodeTest {
         assertEquals(1, result.size());
         assertEquals(1, result.<Integer>getArgument("hello7"));
 
+        result = node.parseExecuteContext(StringReader.of("HELLO7"), null);
+        assertEquals(1, result.size());
+        assertEquals(1, result.<Integer>getArgument("hello7"));
+
+        result = node.parseExecuteContext(StringReader.of("hellO8"), null);
+        assertEquals(1, result.size());
+        assertEquals(2, result.<Integer>getArgument("hello7"));
+
         result = node.parseExecuteContext(StringReader.of("hello8"), null);
+        assertEquals(1, result.size());
+        assertEquals(2, result.<Integer>getArgument("hello7"));
+
+        result = node.parseExecuteContext(StringReader.of("HELLO8"), null);
         assertEquals(1, result.size());
         assertEquals(2, result.<Integer>getArgument("hello7"));
 
