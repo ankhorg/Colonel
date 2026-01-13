@@ -12,10 +12,7 @@ import pers.neige.colonel.node.impl.LiteralNode;
 import pers.neige.colonel.node.impl.RootNode;
 import pers.neige.colonel.reader.StringReader;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -198,21 +195,26 @@ public class NodeTest {
 
     @Test
     public void tab() {
+        val suggestions = new ArrayList<String>();
+        for (val node : node.getLiteralNodesSet()) {
+            suggestions.addAll(node.getTabNames());
+        }
+        
         var result = node.tab(StringReader.of(""), null);
         assertEquals(node.getLiteralNodes().size(), result.size());
-        assertEquals(new ArrayList<>(node.getLiteralNodes().keySet()), result);
+        assertEquals(suggestions, result);
 
         result = node.tab(StringReader.of("he"), null);
-        assertEquals(node.getLiteralNodes().keySet().stream().filter(key -> key.startsWith("he")).count(), result.size());
-        assertEquals(node.getLiteralNodes().keySet().stream().filter(key -> key.startsWith("he")).collect(Collectors.toList()), result);
+        assertEquals(suggestions.stream().filter(key -> key.startsWith("he")).count(), result.size());
+        assertEquals(suggestions.stream().filter(key -> key.startsWith("he")).collect(Collectors.toList()), result);
 
         result = node.tab(StringReader.of("hello2"), null);
-        assertEquals(node.getLiteralNodes().keySet().stream().filter(key -> key.startsWith("hello2")).count(), result.size());
-        assertEquals(node.getLiteralNodes().keySet().stream().filter(key -> key.startsWith("hello2")).collect(Collectors.toList()), result);
+        assertEquals(suggestions.stream().filter(key -> key.startsWith("hello2")).count(), result.size());
+        assertEquals(suggestions.stream().filter(key -> key.startsWith("hello2")).collect(Collectors.toList()), result);
 
         result = node.tab(StringReader.of("hello6"), null);
-        assertEquals(node.getLiteralNodes().keySet().stream().filter(key -> key.startsWith("hello6")).count(), result.size());
-        assertEquals(node.getLiteralNodes().keySet().stream().filter(key -> key.startsWith("hello6")).collect(Collectors.toList()), result);
+        assertEquals(suggestions.stream().filter(key -> key.startsWith("hello6")).count(), result.size());
+        assertEquals(suggestions.stream().filter(key -> key.startsWith("hello6")).collect(Collectors.toList()), result);
 
         result = node.tab(StringReader.of("hello2 "), null);
         assertEquals(1, result.size());
@@ -243,7 +245,7 @@ public class NodeTest {
         assertEquals(params0.keySet().stream().filter(key -> key.startsWith("test3")).collect(Collectors.toList()), result);
 
         result = node.tab(StringReader.of("allow "), null);
-        assertEquals(node.getLiteralNodes().keySet().stream().filter(key -> key.startsWith("allow ")).count(), result.size());
-        assertEquals(node.getLiteralNodes().keySet().stream().filter(key -> key.startsWith("allow ")).collect(Collectors.toList()), result);
+        assertEquals(suggestions.stream().filter(key -> key.startsWith("allow ")).count(), result.size());
+        assertEquals(suggestions.stream().filter(key -> key.startsWith("allow ")).collect(Collectors.toList()), result);
     }
 }
