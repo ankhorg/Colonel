@@ -13,13 +13,16 @@ import java.util.*;
  */
 @SuppressWarnings("unused")
 public class LiteralNode<S, A, R> extends Node<S, R> {
+    /**
+     * 字面量到参数值的映射, key 必须为小写
+     */
     @Getter
     private final @NonNull Map<String, A> keyToPayload;
 
     private LiteralNode(
-            @NonNull String id,
-            @NonNull Map<String, A> keyToPayload,
-            @NonNull String... names
+        @NonNull String id,
+        @NonNull Map<String, A> keyToPayload,
+        @NonNull Collection<String> names
     ) {
         super(id, names);
         this.keyToPayload = keyToPayload;
@@ -27,18 +30,8 @@ public class LiteralNode<S, A, R> extends Node<S, R> {
     }
 
     private LiteralNode(
-            @NonNull String id,
-            @NonNull Map<String, A> keyToPayload,
-            @NonNull Collection<String> names
-    ) {
-        super(id, names);
-        this.keyToPayload = keyToPayload;
-        nullCheck();
-    }
-
-    private LiteralNode(
-            @NonNull String id,
-            @NonNull Map<String, A> keyToPayload
+        @NonNull String id,
+        @NonNull Map<String, A> keyToPayload
     ) {
         super(id, keyToPayload.keySet());
         this.keyToPayload = keyToPayload;
@@ -46,40 +39,36 @@ public class LiteralNode<S, A, R> extends Node<S, R> {
     }
 
     public static <S, R> LiteralNode<S, String, R> literal(
-            @NonNull String id
+        @NonNull String id
     ) {
-        val keyToPayload = new HashMap<String, String>();
-        keyToPayload.put(id.toLowerCase(Locale.ENGLISH), id);
-        return new LiteralNode<>(id, keyToPayload);
+        return literal(id, id);
     }
 
     public static <S, R> LiteralNode<S, String, R> literal(
-            @NonNull String id,
-            @NonNull String... names
+        @NonNull String id,
+        @NonNull String... names
     ) {
-        val keyToPayload = new HashMap<String, String>();
-        for (String name : names) {
-            keyToPayload.put(name.toLowerCase(Locale.ENGLISH), name);
-        }
-        return new LiteralNode<>(id, keyToPayload, names);
+        return literal(id, Arrays.asList(names));
     }
 
     public static <S, R> LiteralNode<S, String, R> literal(
-            @NonNull String id,
-            @NonNull Collection<String> names
+        @NonNull String id,
+        @NonNull Collection<String> names
     ) {
+        val realNames = new HashSet<>(names);
+        realNames.add(id);
         val keyToPayload = new HashMap<String, String>();
-        for (String name : names) {
+        for (val name : realNames) {
             val pre = keyToPayload.put(name.toLowerCase(Locale.ENGLISH), name);
             if (pre == null) continue;
             throw new InvalidParameterException("LiteralNode names are case insensitive, do not enter duplicate recognition names, pre lowercased name is: " + name.toLowerCase(Locale.ENGLISH) + ", current name is: " + name);
         }
-        return new LiteralNode<>(id, keyToPayload, names);
+        return new LiteralNode<>(id, keyToPayload, realNames);
     }
 
     public static <S, A, R> LiteralNode<S, A, R> literal(
-            @NonNull String id,
-            @NonNull Map<String, A> keyToPayload
+        @NonNull String id,
+        @NonNull Map<String, A> keyToPayload
     ) {
         val names = new ArrayList<>(keyToPayload.keySet());
         val lowercasedKeyToPayload = new HashMap<String, A>();
@@ -93,8 +82,13 @@ public class LiteralNode<S, A, R> extends Node<S, R> {
 
     private void nullCheck() {
         for (val entry : keyToPayload.entrySet()) {
-            if (entry.getKey() == null) {
+            val key = entry.getKey();
+            if (key == null) {
                 throw new NullPointerException("LiteralNode keyToPayload must not have null key!");
+            }
+            val lowercasedKeyToPayload = key.toLowerCase(Locale.ENGLISH);
+            if (!lowercasedKeyToPayload.equals(key)) {
+                throw new NullPointerException("LiteralNode keyToPayload key must be lowercased!");
             }
             if (entry.getValue() == null) {
                 throw new NullPointerException("LiteralNode keyToPayload must not have null value, but value associate with " + entry.getKey() + " is null!");

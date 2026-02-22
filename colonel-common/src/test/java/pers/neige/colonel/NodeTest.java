@@ -12,7 +12,10 @@ import pers.neige.colonel.node.impl.LiteralNode;
 import pers.neige.colonel.node.impl.RootNode;
 import pers.neige.colonel.reader.StringReader;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,28 +38,28 @@ public class NodeTest {
         params1.put("hellO8", 2);
 
         node = new RootNode<Void, String>("root")
-                .setExecutor((context) -> "啥也妹有")
-                .then(LiteralNode.literal("hello1"))
-                .then(LiteralNode.<Void, String>literal("hello2").then(LiteralNode.literal("world1")))
-                .then(LiteralNode.<Void, String>literal("hello3").then(
-                        ArgumentNode.argument("map1", new MapArgument<>(() -> params0))
-                ))
-                .then(LiteralNode.<Void, String>literal("hello4").then(
-                        ArgumentNode.argument("int1", new IntegerArgument<>())
-                ))
-                .then(LiteralNode.<Void, String>literal("hello5").then(
-                        ArgumentNode.<Void, Integer, String>argument("int2", new IntegerArgument<>()).setExecutor((context) -> {
-                            Integer int2 = context.getArgument("int2", Integer.class);
-                            return "当前输入的整形参数是: " + int2;
-                        })
-                ))
-                .then(LiteralNode.<Void, String>literal("allow separator literal").then(LiteralNode.literal("world2")))
-                .then(LiteralNode.<Void, String>literal("hello6").then(
-                        ArgumentNode.argument("int3", new IntegerArgument<Void, String>().setDefaultValue(0))
-                ))
-                .then(LiteralNode.literal("hello6hello"))
-                .then(LiteralNode.literal("hello7", params1))
-                .then(LiteralNode.literal("HELLO9"));
+            .setExecutor((context) -> "啥也妹有")
+            .then(LiteralNode.literal("hello1"))
+            .then(LiteralNode.<Void, String>literal("hello2").then(LiteralNode.literal("world1")))
+            .then(LiteralNode.<Void, String>literal("hello3").then(
+                ArgumentNode.argument("map1", new MapArgument<>(() -> params0))
+            ))
+            .then(LiteralNode.<Void, String>literal("hello4").then(
+                ArgumentNode.argument("int1", new IntegerArgument<>())
+            ))
+            .then(LiteralNode.<Void, String>literal("hello5").then(
+                ArgumentNode.<Void, Integer, String>argument("int2", new IntegerArgument<>()).setExecutor((context) -> {
+                    Integer int2 = context.getArgument("int2", Integer.class);
+                    return "当前输入的整形参数是: " + int2;
+                })
+            ))
+            .then(LiteralNode.<Void, String>literal("allow separator literal").then(LiteralNode.literal("world2")))
+            .then(LiteralNode.<Void, String>literal("hello6").then(
+                ArgumentNode.argument("int3", new IntegerArgument<Void, String>().setDefaultValue(0))
+            ))
+            .then(LiteralNode.literal("hello6hello"))
+            .then(LiteralNode.literal("hello7", params1))
+            .then(LiteralNode.literal("HELLO9"));
 
     }
 
@@ -199,7 +202,7 @@ public class NodeTest {
         for (val node : node.getLiteralNodesSet()) {
             suggestions.addAll(node.getTabNames());
         }
-        
+
         var result = node.tab(StringReader.of(""), null);
         assertEquals(node.getLiteralNodes().size(), result.size());
         assertEquals(suggestions, result);

@@ -81,29 +81,29 @@ public abstract class Node<S, R> {
     protected @Nullable Function<Context<S, R>, R> executor;
 
     protected Node(
-            @NonNull String id
+        @NonNull String id
     ) {
         this(id, id);
     }
 
     protected Node(
-            @NonNull String id,
-            @NonNull String... names
+        @NonNull String id,
+        @NonNull String... names
     ) {
         this(id, Arrays.asList(names));
     }
 
     protected Node(
-            @NonNull String id,
-            @NonNull Collection<String> names
+        @NonNull String id,
+        @NonNull Collection<String> names
     ) {
         this(id, names, null);
     }
 
     protected Node(
-            @NonNull String id,
-            @NonNull Collection<String> names,
-            @Nullable Function<Context<S, R>, R> executor
+        @NonNull String id,
+        @NonNull Collection<String> names,
+        @Nullable Function<Context<S, R>, R> executor
     ) {
         this.id = id;
         this.names = names.stream().map(name -> name.toLowerCase(Locale.ENGLISH)).collect(Collectors.toSet());

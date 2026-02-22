@@ -41,19 +41,19 @@ public class CoordinatesArgument<S, R> extends Argument<S, CoordinatesContainer,
     private static @NonNull String getDefaultRelativeSuggestion(@NonNull StringReader reader) {
         val separator = reader.getSeparator();
         return getLastRelativeArg(reader) +
-                separator +
-                getLastRelativeArg(reader) +
-                separator +
-                getLastRelativeArg(reader);
+            separator +
+            getLastRelativeArg(reader) +
+            separator +
+            getLastRelativeArg(reader);
     }
 
     private static @NonNull String getDefaultLocalSuggestion(@NonNull StringReader reader) {
         val separator = reader.getSeparator();
         return getLastLocalArg(reader) +
-                separator +
-                getLastLocalArg(reader) +
-                separator +
-                getLastLocalArg(reader);
+            separator +
+            getLastLocalArg(reader) +
+            separator +
+            getLastLocalArg(reader);
     }
 
     private static @NonNull String getDefaultAbsoluteSuggestion(@NonNull StringReader reader) {
@@ -68,14 +68,14 @@ public class CoordinatesArgument<S, R> extends Argument<S, CoordinatesContainer,
 
     private static @NonNull String getLastTwoRelativeArgs(@NonNull StringReader reader) {
         return getLastRelativeArg(reader) +
-                reader.getSeparator() +
-                getLastRelativeArg(reader);
+            reader.getSeparator() +
+            getLastRelativeArg(reader);
     }
 
     private static @NonNull String getLastTwoLocalArgs(@NonNull StringReader reader) {
         return getLastLocalArg(reader) +
-                reader.getSeparator() +
-                getLastLocalArg(reader);
+            reader.getSeparator() +
+            getLastLocalArg(reader);
     }
 
     private static @NonNull String getLastTwoAbsoluteArgs(@NonNull StringReader reader) {

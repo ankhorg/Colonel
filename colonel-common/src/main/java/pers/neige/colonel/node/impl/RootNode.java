@@ -9,7 +9,7 @@ import pers.neige.colonel.node.Node;
 @SuppressWarnings("unused")
 public class RootNode<S, R> extends Node<S, R> {
     public RootNode(
-            @NonNull String id
+        @NonNull String id
     ) {
         super(id);
     }

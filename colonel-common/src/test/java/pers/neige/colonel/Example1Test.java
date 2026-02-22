@@ -35,36 +35,36 @@ public class Example1Test {
     @BeforeAll
     public static void setup() {
         node = new RootNode<Void, Void>("root")
-                .then(LiteralNode.<Void, Void>literal("打印文本").then(
-                        ArgumentNode.<Void, String, Void>argument("文本内容", new StringArgument<>()).setNullExecutor((context) -> {
-                            String text = context.getArgument("文本内容");
-                            System.out.println(text);
-                        })
-                ))
-                .then(LiteralNode.<Void, Void>literal("抛出错误").then(
-                        // 可以通过Argument#setDefaultValue方法直接设置默认值
-                        ArgumentNode.argument("错误类型", new StringArgument<Void, Void>().setDefaultValue(RUNTIME_EXCEPTION_TYPE)).setNullExecutor((context) -> {
-                            String type = context.getArgument("错误类型");
-                            if (RUNTIME_EXCEPTION_TYPE.equals(type)) {
-                                throw new RuntimeException();
-                            } else if (INVALID_PARAMETER_EXCEPTION_TYPE.equals(type)) {
-                                throw new InvalidParameterException();
-                            }
-                        }).setTaber((context, remaining) -> {
-                            return VALID_EXCEPTION_TYPES.stream().filter(type -> type.startsWith(remaining)).collect(Collectors.toList());
-                        })
-                ))
-                .then(LiteralNode.<Void, Void>literal("抛出错误-写法2").then(
-                        // Argument#setDefaultValue方法可以传入一个用于获取默认值的Function
-                        ArgumentNode.argument("错误类型", new ExceptionTypeArgument<Void, Void>().setDefaultValue((source) -> new ParseResult<>(ExceptionType.RUNTIME_EXCEPTION, true))).setNullExecutor((context) -> {
-                            ExceptionType type = context.getArgument("错误类型");
-                            if (type == ExceptionType.RUNTIME_EXCEPTION) {
-                                throw new RuntimeException();
-                            } else if (type == ExceptionType.INVALID_PARAMETER_EXCEPTION) {
-                                throw new InvalidParameterException();
-                            }
-                        })
-                ));
+            .then(LiteralNode.<Void, Void>literal("打印文本").then(
+                ArgumentNode.<Void, String, Void>argument("文本内容", new StringArgument<>()).setNullExecutor((context) -> {
+                    String text = context.getArgument("文本内容");
+                    System.out.println(text);
+                })
+            ))
+            .then(LiteralNode.<Void, Void>literal("抛出错误").then(
+                // 可以通过Argument#setDefaultValue方法直接设置默认值
+                ArgumentNode.argument("错误类型", new StringArgument<Void, Void>().setDefaultValue(RUNTIME_EXCEPTION_TYPE)).setNullExecutor((context) -> {
+                    String type = context.getArgument("错误类型");
+                    if (RUNTIME_EXCEPTION_TYPE.equals(type)) {
+                        throw new RuntimeException();
+                    } else if (INVALID_PARAMETER_EXCEPTION_TYPE.equals(type)) {
+                        throw new InvalidParameterException();
+                    }
+                }).setTaber((context, remaining) -> {
+                    return VALID_EXCEPTION_TYPES.stream().filter(type -> type.startsWith(remaining)).collect(Collectors.toList());
+                })
+            ))
+            .then(LiteralNode.<Void, Void>literal("抛出错误-写法2").then(
+                // Argument#setDefaultValue方法可以传入一个用于获取默认值的Function
+                ArgumentNode.argument("错误类型", new ExceptionTypeArgument<Void, Void>().setDefaultValue((source) -> new ParseResult<>(ExceptionType.RUNTIME_EXCEPTION, true))).setNullExecutor((context) -> {
+                    ExceptionType type = context.getArgument("错误类型");
+                    if (type == ExceptionType.RUNTIME_EXCEPTION) {
+                        throw new RuntimeException();
+                    } else if (type == ExceptionType.INVALID_PARAMETER_EXCEPTION) {
+                        throw new InvalidParameterException();
+                    }
+                })
+            ));
 
     }
 
@@ -85,32 +85,32 @@ public class Example1Test {
         node.execute(StringReader.of("抛出错误-写法2 神秘的错误"), null);
 
         assertEquals(
-                Arrays.asList("打印文本", "抛出错误", "抛出错误-写法2"),
-                node.tab(StringReader.of(""), null)
+            Arrays.asList("打印文本", "抛出错误", "抛出错误-写法2"),
+            node.tab(StringReader.of(""), null)
         );
         assertEquals(
-                Collections.singletonList("打印文本"),
-                node.tab(StringReader.of("打印"), null)
+            Collections.singletonList("打印文本"),
+            node.tab(StringReader.of("打印"), null)
         );
         assertEquals(
-                Arrays.asList("抛出错误", "抛出错误-写法2"),
-                node.tab(StringReader.of("抛出错误"), null)
+            Arrays.asList("抛出错误", "抛出错误-写法2"),
+            node.tab(StringReader.of("抛出错误"), null)
         );
         assertEquals(
-                VALID_EXCEPTION_TYPES,
-                node.tab(StringReader.of("抛出错误 "), null)
+            VALID_EXCEPTION_TYPES,
+            node.tab(StringReader.of("抛出错误 "), null)
         );
         assertEquals(
-                Collections.singletonList(RUNTIME_EXCEPTION_TYPE),
-                node.tab(StringReader.of("抛出错误 运行时"), null)
+            Collections.singletonList(RUNTIME_EXCEPTION_TYPE),
+            node.tab(StringReader.of("抛出错误 运行时"), null)
         );
         assertEquals(
-                VALID_EXCEPTION_TYPES,
-                node.tab(StringReader.of("抛出错误-写法2 "), null)
+            VALID_EXCEPTION_TYPES,
+            node.tab(StringReader.of("抛出错误-写法2 "), null)
         );
         assertEquals(
-                Collections.singletonList(RUNTIME_EXCEPTION_TYPE),
-                node.tab(StringReader.of("抛出错误-写法2 运行时"), null)
+            Collections.singletonList(RUNTIME_EXCEPTION_TYPE),
+            node.tab(StringReader.of("抛出错误-写法2 运行时"), null)
         );
     }
 

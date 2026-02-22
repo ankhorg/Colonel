@@ -32,16 +32,16 @@ public class ArgumentNode<S, A, R> extends Node<S, R> {
     protected @Nullable BiFunction<Context<S, R>, String, List<String>> taber = null;
 
     private ArgumentNode(
-            @NonNull String id,
-            @NonNull Argument<S, A, R> argument
+        @NonNull String id,
+        @NonNull Argument<S, A, R> argument
     ) {
         super(id);
         this.argument = argument;
     }
 
     public static <S, A, R> ArgumentNode<S, A, R> argument(
-            @NonNull String id,
-            @NonNull Argument<S, A, R> argument
+        @NonNull String id,
+        @NonNull Argument<S, A, R> argument
     ) {
         return new ArgumentNode<>(id, argument);
     }

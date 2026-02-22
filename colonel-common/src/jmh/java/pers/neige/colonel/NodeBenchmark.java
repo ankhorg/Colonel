@@ -47,36 +47,36 @@ public class NodeBenchmark {
         params.put("test3", 3);
 
         specialNode = new RootNode<String, String>("root")
-                .then(LiteralNode.literal("hello1"))
-                .then(LiteralNode.<String, String>literal("hello2").then(LiteralNode.literal("world1")))
-                .then(LiteralNode.<String, String>literal("hello3").then(
-                        ArgumentNode.argument("map1", new MapArgument<>(() -> params))
-                ))
-                .then(LiteralNode.<String, String>literal("hello4").then(
-                        ArgumentNode.argument("int1", new IntegerArgument<>())
-                ))
-                .then(LiteralNode.<String, String>literal("allow separator literal").then(LiteralNode.literal("world2")));
+            .then(LiteralNode.literal("hello1"))
+            .then(LiteralNode.<String, String>literal("hello2").then(LiteralNode.literal("world1")))
+            .then(LiteralNode.<String, String>literal("hello3").then(
+                ArgumentNode.argument("map1", new MapArgument<>(() -> params))
+            ))
+            .then(LiteralNode.<String, String>literal("hello4").then(
+                ArgumentNode.argument("int1", new IntegerArgument<>())
+            ))
+            .then(LiteralNode.<String, String>literal("allow separator literal").then(LiteralNode.literal("world2")));
 
         normalNode = new RootNode<String, String>("root")
-                .then(LiteralNode.literal("hello1"))
-                .then(LiteralNode.<String, String>literal("hello2").then(LiteralNode.literal("world1")))
-                .then(LiteralNode.<String, String>literal("hello3").then(
-                        ArgumentNode.argument("map1", new MapArgument<>(() -> params))
-                ))
-                .then(LiteralNode.<String, String>literal("hello4").then(
-                        ArgumentNode.argument("int1", new IntegerArgument<>())
-                ))
-                .then(LiteralNode.<String, String>literal("allow-separator-literal").then(LiteralNode.literal("world2")));
+            .then(LiteralNode.literal("hello1"))
+            .then(LiteralNode.<String, String>literal("hello2").then(LiteralNode.literal("world1")))
+            .then(LiteralNode.<String, String>literal("hello3").then(
+                ArgumentNode.argument("map1", new MapArgument<>(() -> params))
+            ))
+            .then(LiteralNode.<String, String>literal("hello4").then(
+                ArgumentNode.argument("int1", new IntegerArgument<>())
+            ))
+            .then(LiteralNode.<String, String>literal("allow-separator-literal").then(LiteralNode.literal("world2")));
 
         specialBigNode = new RootNode<String, String>("root")
-                .then(LiteralNode.<String, String>literal("allow separator literal").then(LiteralNode.literal("world2")));
+            .then(LiteralNode.<String, String>literal("allow separator literal").then(LiteralNode.literal("world2")));
         for (int index = 0; index < 10000; index++) {
             specialBigNode.then(LiteralNode.literal(UUID.randomUUID().toString()), false);
         }
         specialBigNode.buildLiteralSearcher();
 
         normalBigNode = new RootNode<String, String>("root")
-                .then(LiteralNode.<String, String>literal("allow-separator-literal").then(LiteralNode.literal("world2")));
+            .then(LiteralNode.<String, String>literal("allow-separator-literal").then(LiteralNode.literal("world2")));
         for (int index = 0; index < 10000; index++) {
             normalBigNode.then(LiteralNode.literal(UUID.randomUUID().toString()), false);
         }
