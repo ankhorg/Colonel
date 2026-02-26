@@ -206,6 +206,17 @@ public abstract class Node<S, R> {
     }
 
     /**
+     * 在当前节点后接续其他节点树（会尝试获取树上的根节点, 用于接续）<br>
+     * 同一个 Node 后只能跟随多个 LiteralNode 或 一个 ArgumentNode，不可混合构建
+     *
+     * @param treeNode 树上的某一个节点
+     * @return {@code this}
+     */
+    public Node<S, R> thenTree(@NonNull Node<S, R> treeNode) {
+        return Node.then(this, treeNode.rootNode(), true);
+    }
+
+    /**
      * 在当前节点后接续其他子节点<br>
      * 同一个 Node 后只能跟随多个 LiteralNode 或 一个 ArgumentNode，不可混合构建
      *
@@ -217,6 +228,25 @@ public abstract class Node<S, R> {
         return Node.then(this, childNode, build);
     }
 
+    /**
+     * 在当前节点后接续其他节点树（会尝试获取树上的根节点, 用于接续）<br>
+     * 同一个 Node 后只能跟随多个 LiteralNode 或 一个 ArgumentNode，不可混合构建
+     *
+     * @param treeNode 树上的某一个节点
+     * @param build    对于 LiteralNode, 是否立即构建字符搜索器
+     * @return {@code this}
+     */
+    public @NonNull Node<S, R> thenTree(@NonNull Node<S, R> treeNode, boolean build) {
+        return Node.then(this, treeNode.rootNode(), build);
+    }
+
+    /**
+     * 根据传入的参数生成一个字面量节点，将它接续到当前节点后并返回<br>
+     * 同一个 Node 后只能跟随多个 LiteralNode 或 一个 ArgumentNode，不可混合构建
+     *
+     * @param id 节点ID
+     * @return 新生成的字面量节点
+     */
     public LiteralNode<S, String, R> thenLiteral(
         @NonNull String id
     ) {
@@ -225,6 +255,14 @@ public abstract class Node<S, R> {
         return node;
     }
 
+    /**
+     * 根据传入的参数生成一个字面量节点，将它接续到当前节点后并返回<br>
+     * 同一个 Node 后只能跟随多个 LiteralNode 或 一个 ArgumentNode，不可混合构建
+     *
+     * @param id    节点ID
+     * @param names 节点别名
+     * @return 新生成的字面量节点
+     */
     public LiteralNode<S, String, R> thenLiteral(
         @NonNull String id,
         @NonNull String... names
@@ -234,6 +272,14 @@ public abstract class Node<S, R> {
         return node;
     }
 
+    /**
+     * 根据传入的参数生成一个字面量节点，将它接续到当前节点后并返回<br>
+     * 同一个 Node 后只能跟随多个 LiteralNode 或 一个 ArgumentNode，不可混合构建
+     *
+     * @param id    节点ID
+     * @param names 节点别名
+     * @return 新生成的字面量节点
+     */
     public LiteralNode<S, String, R> thenLiteral(
         @NonNull String id,
         @NonNull Collection<String> names
@@ -243,6 +289,14 @@ public abstract class Node<S, R> {
         return node;
     }
 
+    /**
+     * 根据传入的参数生成一个字面量节点，将它接续到当前节点后并返回<br>
+     * 同一个 Node 后只能跟随多个 LiteralNode 或 一个 ArgumentNode，不可混合构建
+     *
+     * @param id           节点ID
+     * @param keyToPayload 节点名（ID或别名）到节点值的映射
+     * @return 新生成的字面量节点
+     */
     public <A> LiteralNode<S, A, R> thenLiteral(
         @NonNull String id,
         @NonNull Map<String, A> keyToPayload
@@ -252,6 +306,14 @@ public abstract class Node<S, R> {
         return node;
     }
 
+    /**
+     * 根据传入的参数生成一个参数节点，将它接续到当前节点后并返回<br>
+     * 同一个 Node 后只能跟随多个 LiteralNode 或 一个 ArgumentNode，不可混合构建
+     *
+     * @param id       节点ID
+     * @param argument 参数类型
+     * @return 新生成的参数节点
+     */
     public <A> ArgumentNode<S, A, R> thenArgument(
         @NonNull String id,
         @NonNull Argument<S, A, R> argument
