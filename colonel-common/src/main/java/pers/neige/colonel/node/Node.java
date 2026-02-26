@@ -220,35 +220,45 @@ public abstract class Node<S, R> {
     public LiteralNode<S, String, R> thenLiteral(
         @NonNull String id
     ) {
-        return LiteralNode.literal(id, id);
+        val node = LiteralNode.<S, R>literal(id, id);
+        then(node);
+        return node;
     }
 
     public LiteralNode<S, String, R> thenLiteral(
         @NonNull String id,
         @NonNull String... names
     ) {
-        return LiteralNode.literal(id, Arrays.asList(names));
+        val node = LiteralNode.<S, R>literal(id, Arrays.asList(names));
+        then(node);
+        return node;
     }
 
     public LiteralNode<S, String, R> thenLiteral(
         @NonNull String id,
         @NonNull Collection<String> names
     ) {
-        return LiteralNode.literal(id, names);
+        val node = LiteralNode.<S, R>literal(id, names);
+        then(node);
+        return node;
     }
 
     public <A> LiteralNode<S, A, R> thenLiteral(
         @NonNull String id,
         @NonNull Map<String, A> keyToPayload
     ) {
-        return LiteralNode.literal(id, keyToPayload);
+        val node = LiteralNode.<S, A, R>literal(id, keyToPayload);
+        then(node);
+        return node;
     }
 
     public <A> ArgumentNode<S, A, R> thenArgument(
         @NonNull String id,
         @NonNull Argument<S, A, R> argument
     ) {
-        return ArgumentNode.argument(id, argument);
+        val node = ArgumentNode.argument(id, argument);
+        then(node);
+        return node;
     }
 
     /**
@@ -446,5 +456,19 @@ public abstract class Node<S, R> {
             return Collections.emptyList();
         }
         return context.tab();
+    }
+
+    /**
+     * 获取当前线路上最顶层的父节点（可能为 {@code this}）
+     *
+     * @return 当前线路上最顶层的父节点（可能为 {@code this}）
+     */
+    public @NonNull Node<S, R> rootNode() {
+        Node<S, R> currentNode = this;
+        Node<S, R> parentNode;
+        while ((parentNode = currentNode.parentNode) != null) {
+            currentNode = parentNode;
+        }
+        return currentNode;
     }
 }
