@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.Nullable;
 import org.neosearch.stringsearcher.StringSearcher;
+import pers.neige.colonel.arguments.Argument;
 import pers.neige.colonel.arguments.ParseResult;
 import pers.neige.colonel.context.Context;
 import pers.neige.colonel.context.NodeChain;
@@ -214,6 +215,40 @@ public abstract class Node<S, R> {
      */
     public @NonNull Node<S, R> then(@NonNull Node<S, R> childNode, boolean build) {
         return Node.then(this, childNode, build);
+    }
+
+    public LiteralNode<S, String, R> thenLiteral(
+        @NonNull String id
+    ) {
+        return LiteralNode.literal(id, id);
+    }
+
+    public LiteralNode<S, String, R> thenLiteral(
+        @NonNull String id,
+        @NonNull String... names
+    ) {
+        return LiteralNode.literal(id, Arrays.asList(names));
+    }
+
+    public LiteralNode<S, String, R> thenLiteral(
+        @NonNull String id,
+        @NonNull Collection<String> names
+    ) {
+        return LiteralNode.literal(id, names);
+    }
+
+    public <A> LiteralNode<S, A, R> thenLiteral(
+        @NonNull String id,
+        @NonNull Map<String, A> keyToPayload
+    ) {
+        return LiteralNode.literal(id, keyToPayload);
+    }
+
+    public <A> ArgumentNode<S, A, R> thenArgument(
+        @NonNull String id,
+        @NonNull Argument<S, A, R> argument
+    ) {
+        return ArgumentNode.argument(id, argument);
     }
 
     /**
